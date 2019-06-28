@@ -1,0 +1,304 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<link rel="stylesheet" href="lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>集团业务系统管理</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i>首页<span class="c-gray en">&gt;</span>系统管理<span class="c-gray en">&gt;</span>集团业务系统管理
+</nav>
+
+<table class="table">
+	<tr>
+		<!--首页>系统管理>集团业务系统管理   左变的树-->
+		<td style="width: 12%" class="va-t">
+			<!--<br>-->
+			<div style="background-color: #f2f0ff;height: 30px;text-align: right">
+				<a title="添加节点" href="javascript:;" onclick="bs_group_add('添加集团业务系统','bs_group_add.html',800,530)" style="text-decoration:none"><span style="font-weight: bold;font-size: 18px;line-height: 30px">+</span></a>
+				<a title="编辑节点" href="javascript:;" onclick="bs_group_edit('编辑集团业务系统','bs_group_edit.html',800,800)" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a>
+				<a title="删除节点" href="javascript:;" onclick="bs_group_del(this)" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>&emsp;
+			</div>
+			<ul id="treeDemo" class="ztree"></ul><!--集团业务树-->
+		</td>
+		<!--资产信息+管辖资产-->
+		<td style="width: 88%" class="va-t">
+			<iframe ID="testIframe" Name="testIframe" FRAMEBORDER=0 SCROLLING="no" width=100%  height=600px
+					SRC="bs_group_table.html"></iframe>
+		</td>
+	</tr>
+</table>
+<div>
+
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script> 
+<script type="text/javascript">
+var setting = {
+	view: {
+		dblClickExpand: false,
+		showLine: false,
+		selectedMulti: false
+	},
+	data: {
+		simpleData: {
+			enable:true,
+			idKey: "id",
+			pIdKey: "pId",
+			rootPId: ""
+		}
+	},
+	callback: {
+		beforeClick: function(treeId, treeNode) {
+		    if(treeNode.isParent){
+		        $.cookie("isParent","Y")
+			}else{
+                $.cookie("isParent","N")
+			}
+		    //alert(treeNode.id);
+			var zTree = $.fn.zTree.getZTreeObj("tree");
+			var name=treeNode.name;
+			var id=treeNode.id;
+			$.cookie("name",name);
+            $.cookie("treeId",id);
+			if(name!="暂无"){
+                $.ajax({
+                    url:'pageDatashow?name='+name,
+                    type:'get',
+                    dataType:'json',
+                    success:function (data) {
+                        $.cookie("check","1");
+                        var pkparent=data.amBsGroup.pkBsParent;
+                        var count=0;
+                        count= groupAndProvList(data.bsResultDTOS,count);
+                        showGroup(data.amBsGroup,count);
+                        showConnectAsset(data.pageInfo.list,pkparent);
+                        showProv(data.bdmProvs);
+                        showAssetType(data.amAssetTypes);
+                        $('#testIframe').contents().find("#asset_now").text(data.pageInfo.pageNum);
+                        $('#testIframe').contents().find("#asset_pages").text(data.pageInfo.pages);
+                    },
+                    error:function () {
+                        alert("数据加载失败");
+                    }
+                });
+			}
+			if (treeNode.isParent) {
+                //demoIframe.attr("src","system-base.html");
+				zTree.expandNode(treeNode);
+				return true;
+			} else {
+				//demoIframe.attr("src","system-base.html");
+				return true;
+			}
+		}
+	}
+};
+var zNodes =[
+	/*{ id:1, pId:0, name:"移动集团",aaa:0, open:true},
+		{ id:11, pId:1, name:"核心网系统",aaa:'aaaaa'},
+			{ id:111, pId:11, name:"通信网电路域省际长途网",aaa:6},
+			{ id:112, pId:11, name:"移动通信网电路域省内长途网",aaa:6},
+			{ id:113, pId:11, name:"移动通信网分组域国际部分",aaa:3},
+    	{ id:12, pId:1, name:"业务网系统",aaa:1},
+    	{ id:13, pId:1, name:"数据网系统",aaa:2},
+    	{ id:14, pId:1, name:"IP承载网系统",aaa:3}*/
+];
+
+var code;
+		
+function showCode(str) {
+	if (!code) code = $("#code");
+	code.empty();
+	code.append("<li>"+str+"</li>");
+}
+		
+$(document).ready(function(){
+	var t = $("#treeDemo");
+	$.ajax({
+		url:'sortAllAmBs',
+		dataType:'json',
+		success:function (data) {
+            zNodes=data;
+            t = $.fn.zTree.init(t, setting, zNodes);
+            demoIframe = $("#testIframe");
+            //demoIframe.on("load", loadReady);
+            var zTree = $.fn.zTree.getZTreeObj("tree");
+            //zTree.selectNode(zTree.getNodeByParam("id",'11'));
+        },
+		error:function () {
+            alert("分类树加载失败")
+        }
+	})
+});
+//省份下拉框
+function showProv(data){
+    var str='<option value="">请选择省份</option>';
+    for(var i=0;i<data.length;i++){
+        str +='<option value="'+data[i].provName+'">'+data[i].provName+'</option>'
+    }
+    $('#testIframe').contents().find("#prov").html(str);
+}
+//资产类型下拉框
+	function showAssetType(data) {
+        var str='<option value="">请选择资产类型</option>';
+        for(var i=0;i<data.length;i++){
+            str +='<option value="'+data[i].typeName+'">'+data[i].typeName+'</option>'
+        }
+        $('#testIframe').contents().find("#assetType").html(str);
+    }
+</script>
+<script>
+    function showGroup(data,count) {
+        var str=' <tr>\n' +
+            '<td>\n' +
+            '<span style="font-weight: bold;color: #00a0e9">业务系统名称：</span>\n' +
+            '<span>'+data.bsName+'</span>\n' +
+            '</td>\n' +
+            '<td>\n' +
+            '<span style="font-weight: bold;color: #00a0e9">管辖资产数量：</span>\n' +
+            '<span>'+count+'</span>\n' +
+            '</td>\n' +
+            '<td><span style="font-weight: bold;color: #00a0e9">上级业务系统：</span>\n' +
+            '<span>'+data.pkBsParent+'</span>\n' +
+            '</td>\n' +
+            '</tr>\n' +
+            '<tr>\n' +
+            '<td><span style="font-weight: bold;color: #00a0e9">上级业务编码：</span>\n' +
+            '<span>'+data.bsCode+'</span>\n' +
+            '</td>\n' +
+            '<td><span style="font-weight: bold;color: #00a0e9">业务系统来源：</span>\n' +
+            '<span>'+data.bsSrc+'</span>\n' +
+            '</td>\n' +
+            '<td><span style="font-weight: bold;color: #00a0e9">显示顺序：</span>\n' +
+            '<span>'+data.displaySeq+'</span>\n' +
+            '</td>\n' +
+            '</tr>\n' +
+            '<tr>\n' +
+            ' <td colspan="3"><span style="font-weight: bold;color: #00a0e9">业务系统描述：</span>\n' +
+            '<span>'+data.bsDesc+'</span>\n' +
+            '</td>\n' +
+            '</tr>\n' +
+            '<tr>\n' +
+            '<td colspan="2"><span style="font-weight: bold;color: #00a0e9">省份映射正则：</span>\n' +
+            '<span>'+data.mappingRegex+'</span>\n' +
+            '</td>\n' +
+            '<td>\n' +
+            '<a class="btn btn-primary radius r" onclick="mappingAgain(\'重新映射\',\'bs_group_prov_remappingAgain.html\',800,530)" style="height: 30px">\n' +
+            '重新映射\n</a>\n' +
+            '</td>\n' +
+            '</tr>';
+        $('#testIframe').contents().find("#showGroup").html(str);
+        //$("#showGroup").html(str);
+    }
+    function groupAndProvList(data,count) {
+        var str = '';
+        for (var i = 0; i < data.length; i++) {
+            str += '<tr class="text-c">\n' +
+					'<td><input type="checkbox" value="\'+data[i].pKBsProv+\'" name="ids"></td>'+
+                '<td>' + (i + 1) + '</td>\n' +
+                '<td>' + data[i].provName + '</td>\n' +
+                '<td>' + data[i].bsName + '</td>\n' +
+                '<td>' + data[i].matchType + '</td>\n' +
+                '<td>' + data[i].assetSum + '</td>\n' +
+                '<td class="f-14">\n' +
+                '<a title="删除" onclick="bs_prov_del(this,\''+data[i].pKBsProv+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a>\n' +
+                '</td>\n' +
+                '</tr>';
+            count +=data[i].assetSum;
+        }
+        $('#testIframe').contents().find("#tb").html(str);
+        //$("#tb").html(str);
+        return count;
+    }
+    function showConnectAsset(data,pkparent) {
+		var str='';
+		for(var i=0;i<data.length;i++){
+		    str +='<tr class="text-c">\n' +
+                '<td>'+(i+1)+'</td>\n' +
+                '<td>'+best(pkparent)+'->'+data[i].gName+'</td>\n' +
+                '<td>'+data[i].provName+'</td>\n' +
+                '<td>'+data[i].bsName+'->'+data[i].pName+'</td>\n' +
+                '<td>'+data[i].assetName+'</td>\n' +
+                '<td>'+data[i].assetIP+'</td>\n' +
+                '<td>'+best(data[i].parentName)+'->'+data[i].typeName+'</td>\n' +
+                '<td class="f-14">\n' +
+                '<a style="text-decoration:none"\n' +
+                'onclick="bs_group_look_asset(\'查看资产信息\',\'bs_group_look_asset.html\',\'0001\',\'780\',\'400\')"\n' +
+                'href="javascript:;"><span style="color: #0e90d2">查看</span>\n' +
+                '</a>\n' +
+                '</td>\n' +
+                '</tr>';
+		}
+        $('#testIframe').contents().find("#tb2").html(str);
+    }
+    function best(data) {
+		if(data==null){
+		    return '';
+		}
+		return data;
+    }
+
+    function bs_group_add(title,url,w,h){
+        var groupId = $.cookie("treeId");
+        if(groupId==null){
+            alert("请选择一个节点")
+		}else{
+            if(groupId>1000){
+                alert("三级节点不能添加")
+            }else{
+                parent.layer_show(title,url,w,h);
+            }
+		}
+    }
+    function bs_group_del(obj){
+        var isParent=$.cookie("isParent");
+        if(isParent=="N"){
+            layer.confirm('确定要删除该【集团】业务系统信息吗？',function(index){
+                //请先删除该业务系统下的子节点
+                $.ajax({
+                    type: 'get',
+                    url: 'deleteGroup',
+                    dataType: 'json',
+                    success: function(data){
+                        if(data.code==1){
+                            window.location.reload();
+                            layer.msg('已删除!',{icon:1,time:1000});
+						}
+                    },
+                    error:function(data) {
+                        console.log(data.msg);
+                    },
+                });
+            });
+		}else{
+            layer.msg('非末节点不能删除!',{icon:1,time:1000});
+		}
+    }
+
+</script>
+</body>
+</html>

@@ -1,0 +1,323 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<title>资产属性管理</title>
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 资产属性管理 <span class="c-gray en">&gt;</span> 属性管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="btn-refresh">刷新</i></a></nav>
+<div class="page-container">
+	<div class="text-c">
+		<form action="" method="post" id="queryForm">
+		属性分类：
+		<span class="select-box inline">
+		<select class="select" id="amPropClasses" name="pkPropClass">
+		</select>
+		</span>
+
+		业务分类：
+		<span class="select-box inline">
+		<select class="select" id="bsType" name="bsType">
+		</select>
+		</span>
+
+
+		采集方式：
+		<span class="select-box inline">
+		<select class="select" id="collectType" name="collectType">
+		</select>
+		</span>
+
+		属性信息：<input type="text" class="input-text" id="" name="propName" style="">
+		<button type="button" onclick="queryProp()" class="btn btn-primary radius" id="" name=""><i class="Hui-iconfont"></i> 查询</button>
+		<button type="button" onclick="reset()" class="btn btn-primary radius" id="" name=""><i class="Hui-iconfont"></i> 重置</button>
+		</form>
+	</div>
+	<a href="javascript:;" onclick="admin_permission_add('添加','asset-prop-add.html','','310')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a></span> <span class="r">共有数据：<strong><font id="count"></font></strong> 条</span> </div>
+	<table class="table table-border table-bordered table-bg">
+		<thead>
+			<tr class="text-c">
+				<th width="25"><input type="checkbox" name="" value=""></th>
+				<th width="50">序号</th>
+				<th width="100">属性名称</th>
+				<th width="100">属性编码</th>
+				<th width="100">数据类型</th>
+				<th width="100">属性分类</th>
+				<th width="100">业务分类</th>
+				<th width="100">采集方式</th>
+				<th width="100">操作</th>
+			</tr>
+		</thead>
+		<tbody id="allAmAssetProp">
+		</tbody>
+	</table>
+</div>
+<!--分页按钮-->
+<div>
+	&emsp;&emsp;当前第<font id="pageNum">1</font>页，共<font id="pages">10</font>页
+	<!--下一页-->
+	<a href="javascript:;" onclick="changePage('next')" id="page_down"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>下一页</a>
+	<a class="r">&nbsp;</a>
+	<!--上一页-->
+	<a href="javascript:;" onclick="changePage('pre')" id="page_up"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>上一页</a>
+</div>
+<script>
+	function queryProp() {
+		$.ajax({
+			url:'queryProp',
+			type:'post',
+			data:$("#queryForm").serialize(),
+			dataType:'json',
+			success:function (data) {
+                allAmAssetProp(data);
+            },
+			error:function () {
+				alert("数据加载失败")
+            }
+		});
+    }
+</script>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script> 
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script> 
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/datatables/1.10.0/jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+/*
+	参数解释：
+	title	标题
+	url		请求的url
+	id		需要操作的数据id
+	w		弹出层宽度（缺省调默认值）
+	h		弹出层高度（缺省调默认值）
+*/
+/*管理员-权限-添加*/
+function admin_permission_add(title,url,w,h){
+	layer_show(title,url,w,h);
+}
+/*管理员-权限-编辑*/
+function asset_prop_edit(title,url,id,w,h){
+	$.cookie("id",id);
+    layer_show(title,url,w,h);
+}
+/*翻页显示*/
+function changePage(data) {
+	var pageNum=$("#pageNum").text();
+	var pages=$("#pages").text();
+   if(data=='pre'){
+       pageNum=parseInt(pageNum)-1;
+   }else{
+       pageNum=parseInt(pageNum)+1;
+   }
+    /*$("#page_up").attr("class","btn btn-default radius r");  灰色
+        $("#page_down").attr("class","btn btn-primary radius r");   蓝色 */
+
+    $("#page_up").attr("class","btn btn-primary radius r");
+    $("#page_down").attr("class","btn btn-primary radius r");
+
+    if(pageNum==1){
+        $("#page_up").attr("class","btn btn-default radius r");
+    }
+    if(pageNum>=pages){
+        $("#page_down").attr("class","btn btn-default radius r");
+    }
+    if(pageNum>0&pageNum<=pages){
+       $.ajax( {
+           url:'assetPropPageInit?pageNum='+pageNum,
+           type:'get',
+           dataType:'json',
+           success:function (data) {
+               amPropClasses(data.amPropClasses);
+               bsType(data.bsType);
+               collectType(data.collectType);
+               allAmAssetProp(data.pageInfo.list);
+               showPageInfo(data.pageInfo);
+           },
+           error:function () {
+               alert("页面加载失败");
+           }
+       })
+   }
+}
+/*管理员-权限-删除*/
+function assetPropDelete(obj,id){
+	layer.confirm('确认要删除吗？',function(index){
+		$.ajax({
+			type: 'POST',
+			url: 'assetPropDelete?id='+id,
+			dataType: 'json',
+			success: function(data){
+			    if(data.code==1){
+                    $(obj).parents("tr").remove();
+                    layer.msg('已删除!',{icon:1,time:1000});
+                    $('.btn-refresh').click();
+				}else{
+                    layer.msg('删除失败!',{icon:1,time:1000});
+				}
+			},
+			error:function(data) {
+				console.log(data.msg);
+			},
+		});		
+	});
+}
+</script>
+
+<script>
+	$(function () {
+		$.ajax( {
+			url:'assetPropPageInit',
+			type:'get',
+			dataType:'json',
+			success:function (data) {
+                amPropClasses(data.amPropClasses);
+                bsType(data.bsType);
+                collectType(data.collectType);
+                allAmAssetProp(data.pageInfo.list);
+                showPageInfo(data.pageInfo);
+                var pageNum  = data.pageInfo.pageNum;
+                if(pageNum==1){
+                    $("#page_up").attr("class","btn btn-default radius r");
+                }
+            },
+			error:function () {
+				alert("页面加载失败");
+            }
+        })
+    })
+
+	function showPageInfo(data) {
+		$("#pageNum").text(data.pageNum);
+		$("#pages").text(data.pages);
+        $("#count").text(data.total);
+    }
+    function amPropClasses(data) {
+		var str='<option value="0">所有</option>'
+		for(var i=0;i<data.length;i++){
+		    str+='<option value="'+data[i].pkPropClass+'">'+data[i].propClassName+'</option>'
+		}
+		$("#amPropClasses").html(str)
+    }
+    function bsType(data) {
+        var str='<option value="0">所有</option>'
+        for(var i=0;i<data.length;i++){
+            str+='<option value="'+data[i].bsTypeId+'">'+data[i].bsTypeName+'</option>'
+        }
+        $("#bsType").html(str);
+    }
+
+    function collectType(data) {
+        var str='<option value="0">所有</option>'
+        for(var i=0;i<data.length;i++){
+            str+='<option value="'+data[i]+'">'+change(data[i])+'</option>'
+        }
+        $("#collectType").html(str);
+    }
+    /*采集方式转化方法
+    * 人工录入、登录采集、远程扫描*/
+    function change(data) {
+       if(data==001){
+         return "远程扫描";
+	   }
+	   if(data==10){
+            return "登录采集";
+	   }
+	   if(data==100){
+            return "人工录入";
+	  }
+	  if(data==110){
+	        return "人工录入、登录采集";
+	  }
+	  if(data==101){
+	     return "人工录入、远程扫描"
+	  }
+        if(data==11){
+            return "登录采集、远程扫描"
+        }
+        if(data==111){
+            return "人工录入、登录采集、远程扫描"
+        }
+    }
+    /*列表显示*/
+	function allAmAssetProp(data) {
+        var str='';
+	    for(var i=0;i<data.length;i++){
+             str+='<tr class="text-c">\n' +
+                 '\t\t\t\t<td><input type="checkbox" value="'+data[i].pkAssetProp+'" name="ids"></td>\n' +
+                '\t\t\t\t<td>'+(i+1)+'</td>\n' +
+                '\t\t\t\t<td>'+data[i].propName+'</td>\n' +
+                '\t\t\t\t<td>'+data[i].propCode+'</td>\n' +
+                '\t\t\t\t<td>'+dataChange(data[i].dataType)+'</td>\n' +
+                '\t\t\t\t<td>'+data[i].pkPropClass+'</td>\n' +
+                '\t\t\t\t<td>'+bsTypeToString(data[i].bsType)+'</td>\n' +
+                '\t\t\t\t<td>'+change(data[i].collectType)+'</td>\n' +
+                '\t\t\t\t<td><a title="编辑" href="javascript:;" onclick="asset_prop_edit(\'角色编辑\',\'asset_prop_edit.html\',\''+data[i].pkAssetProp+'\',\'\',\'310\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6df;</i></a> <a title="删除" href="javascript:;" onclick="assetPropDelete(this,\''+data[i].pkAssetProp+'\')" class="ml-5" style="text-decoration:none"><i class="Hui-iconfont">&#xe6e2;</i></a></td>\n' +
+                '\t\t\t</tr>'
+          }
+		$("#allAmAssetProp").html(str);
+	}
+	/*数据类型转化*/
+	function dataChange(data) {
+       if(data=="N"){
+		   return "数字类型"
+	   }
+        if(data=="D"){
+          return "日期类型"
+        }
+        if(data=="S"){
+            return "字符"
+        }
+        if(data=="E"){
+            return "枚举"
+        }
+        if(data=="L"){
+            return "列表类型"
+        }
+        if(data=="P"){
+            return "密码"
+        }
+    }
+
+    function bsTypeToString(bsType){
+        //switch ()
+        //if
+        if(bsType==1){
+            return "通用属性";
+        }else if(bsType == 2){
+            return "硬件属性";
+        }else if(bsType == 3){
+            return "软件属性";
+        }else if(bsType == 4){
+            return "登录属性";
+        }else{
+            return "自定义属性";
+        }
+    }
+    //重置属性
+    function reset() {
+        $('.btn-refresh').click();
+    }
+
+</script>
+</body>
+</html>

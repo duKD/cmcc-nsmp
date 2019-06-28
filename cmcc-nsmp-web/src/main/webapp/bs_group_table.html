@@ -1,0 +1,286 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5shiv.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css"/>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <!--/meta 作为公共模版分离出去-->
+</head>
+<body>
+
+<div class="page-container">
+    <div id="tab-system" class="HuiTab">
+        <!--Tab页签-->
+        <div class="tabBar cl">
+            <span>基本信息</span>
+            <span>管辖资产</span>
+        </div>
+
+        <!--基本信息tb页签-->
+        <div class="tabCon"><br>
+            <!--集团业务系统详情-->
+            <div class="text-c" style="background-color: #f2f0ff  ;line-height: 25px" >
+                <table style="text-align: left" id="showGroup">
+                </table>
+            </div>
+            <br>
+
+            <span style="font-weight: bold">省份业务系统</span>
+
+            <br>
+            <a onclick="mapping_group_prov('手动映射','bs_group_prov_mapping.html','','510')" href="javascript:;" id="" style="height: 30px;"  class="btn btn-primary radius l">
+                手动映射
+            </a>
+            <br>
+            <!--表格(省份业务系统)-->
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th width="50"></th>
+                        <th width="50">序号</th>
+                        <th width="200">省份</th>
+                        <th width="130">省份业务系统</th>
+                        <th width="130">匹配方式</th>
+                        <th width="200">管辖资产数量</th>
+                        <th width="80">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tb">
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div>
+                <br>当前第<font id="group_now">1</font>页，共<font id="group_pages">10</font>页
+                <a href="javascript:;" onclick="group_page_down()" id="group_page_down"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>下一页</a>
+                <a class="r">&nbsp;</a>
+                <a href="javascript:;" onclick="group_page_up()" id="group_page_up"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>上一页</a>
+            </div>
+        </div>
+        <!--管辖资产tab页签-->
+        <div class="tabCon"><br>
+            <!--查询下拉框-->
+            <form id="formCondition">
+                <input type="hidden" value="" name="">
+            <div class="text-c" style="background-color: #7EC4CC;line-height: 50px">
+                省份：
+                <span>
+                    <select class="select" id="prov" name="prov" style="width: 150px;text-align-last: center;height: 30px;">
+                    </select>
+                </span>&emsp;
+                资产类型：
+                <span>
+                    <select class="select" id="assetType" name="assetType" style="width: 150px;text-align-last: center;height: 30px">
+                    </select>
+                </span>&emsp;
+                资产信息：
+                <input type="text" placeholder="资产名称、资产IP" class="input-text" name="assetName" style="width:150px">&emsp;
+                <!--查询、重置-->
+                <button type="button" onclick="showConnectAssetByCondition()" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 查询</button>
+                <button type="button" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 重置</button>
+            </div>
+            </form>
+            <!--表格-->
+            <div class="mt-20">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                    <tr class="text-c">
+                        <th width="50">序号</th>
+                        <th width="200">集团业务系统</th>
+                        <th width="80">省份</th>
+                        <th width="200">省份业务系统</th>
+                        <th width="130">资产名称</th>
+                        <th width="130">资产IP</th>
+                        <th width="200">资产类型</th>
+                        <th width="80">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tb2">
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div>
+                <br>当前第<font id="asset_now"></font>页，共<font id="asset_pages"></font>页
+                <a href="javascript:;" onclick="changePage('next')" id="asset_page_down"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>下一页</a>
+                <a class="r">&nbsp;</a>
+                <a href="javascript:;" onclick="changePage('pre')" id="asset_page_up"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>上一页</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+        $("#tab-system").Huitab({
+            index: 0
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+<script>
+    /*查看资产信息*/
+    function bs_group_look_asset(title,url,id,w,h){
+        parent.parent.layer_show(title,url,w,h);
+    }
+
+    /*省份业务系统删除*/
+    function bs_prov_del(obj,id){
+        var pkBsGroup=$.cookie("pkBsGroup");
+        parent.parent.layer.confirm('确定要删除该业务系统信息吗？',function(index){
+            $.ajax({
+                url:'deleteAmBsGroupProv?pkBsGroup='+pkBsGroup+'&pKBsProv='+id,
+                type: 'get',
+                dataType: 'json',
+                success: function(data){
+                    if(data.code=1){
+                        $(obj).parents("tr").remove();
+                        layer.msg('已删除!',{icon:1,time:1000});msg('已删除!',{icon:1,time:1000});
+                        parent.parent.layer.close(index);
+                    }
+                },
+                error:function(data) {
+                    console.log(data.msg);
+                },
+            });
+           /* $(obj).parents("tr").remove();
+            layer.msg('已删除!',{icon:1,time:1000});
+            parent.parent.layer.close(index);*/
+        });
+    }
+
+    /*手动映射*/
+    function mapping_group_prov(title,url,w,h){
+        parent.parent.layer_show(title,url,w,h);
+    }
+</script>
+<script>
+
+    function changePage(data) {
+        //先获取单前页面信息，以及页面总数
+        var pageNum=$("#asset_now").text();
+        var pageSize=$("#asset_pages").text();
+        var name=$.cookie("name");
+        var check=$.cookie("check");
+        if(data=='next'){
+            pageNum = parseInt(pageNum)+1;
+        }else{
+            pageNum =parseInt(pageNum)-1;
+        }
+
+      if(pageNum>0&pageNum<=pageSize){
+          if(check==1){
+              $.ajax({
+                  url:'pageDatashow?pageNum='+pageNum+'&name='+name,
+                  type:'get',
+                  dataType:'json',
+                  success:function (data) {
+                      var pkparent=data.amBsGroup.pkBsParent;
+                      showConnectAsset(data.pageInfo.list,pkparent);
+                      $("#asset_now").text(data.pageInfo.pageNum);
+                      $("#asset_pages").text(data.pageInfo.pages);
+                  },
+                  error:function () {
+                      alert("数据加载失败");
+                  }
+              });
+          }else if(check==2){
+
+
+          }
+      }
+    }
+    function showConnectAsset(data,pkparent) {
+        var str='';
+        for(var i=0;i<data.length;i++){
+            str +='<tr class="text-c">\n' +
+                '<td>'+(i+1)+'</td>\n' +
+                '<td>'+best(pkparent)+'->'+data[i].gName+'</td>\n' +
+                '<td>'+data[i].provName+'</td>\n' +
+                '<td>'+data[i].bsName+'->'+data[i].pName+'</td>\n' +
+                '<td>'+data[i].assetName+'</td>\n' +
+                '<td>'+data[i].assetIP+'</td>\n' +
+                '<td>'+best(data[i].parentName)+'->'+data[i].typeName+'</td>\n' +
+                '<td class="f-14">\n' +
+                '<a style="text-decoration:none"\n' +
+                'onclick="bs_group_look_asset(\'查看资产信息\',\'bs_group_look_asset.html\',\'0001\',\'780\',\'400\')"\n' +
+                'href="javascript:;"><span style="color: #0e90d2">查看</span>\n' +
+                '</a>\n' +
+                '</td>\n' +
+                '</tr>';
+        }
+        $("#tb2").html(str);
+    }
+    function best(data) {
+        if(data==null){
+            return '';
+        }
+        return data;
+    }
+    function mappingAgain(title,url,w,h) {
+        parent.parent.layer_show(title,url,w,h);
+    }
+    function showConnectAssetByCondition() {
+        $.ajax({
+            url:'showConnectAssetByCondition',
+            data:$("#formCondition").serialize(),
+            dataType:'json',
+            type:'post',
+            success:function (data) {
+                $.cookie("check","2");
+                var pkparent=null;
+                showConnectAsset(data.list,pkparent);
+               $("#asset_now").text(data.pageNum);
+               $("#asset_pages").text(data.pages);
+            },
+            error:function () {
+                alert("数据加载失败")
+            }
+        })
+    }
+</script>
+<script>
+
+</script>
+<script>
+</script>
+</body>
+</html>
