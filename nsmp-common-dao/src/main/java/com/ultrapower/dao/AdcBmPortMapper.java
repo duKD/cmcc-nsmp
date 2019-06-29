@@ -1,7 +1,9 @@
 package com.ultrapower.dao;
 
 import com.ultrapower.pojo.AdcBmPort;
+import com.ultrapower.pojo.AdcBmPortDTO;
 import com.ultrapower.pojo.AdcBmPortExample;
+import com.ultrapower.pojo.AmUser;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -29,5 +31,5 @@ public interface AdcBmPortMapper {
 
     int updateByPrimaryKey(AdcBmPort record);
 
-    List<AdcBmPort> showAllPortProv(String id);
+    List<AdcBmPortDTO> showAllPortProv(AmUser amUser);
 }

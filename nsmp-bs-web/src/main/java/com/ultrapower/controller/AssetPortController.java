@@ -18,8 +18,8 @@ public class AssetPortController {
      * @return
      */
     @GetMapping("/showAllPageMsg")
-    public Map<String ,Object> showAllPageMsg(){
-        Map<String, Object> map = assetPortService.showAllPageMsg();
+    public Map<String ,Object> showAllPageMsg(@CookieValue("token") String value){
+        Map<String, Object> map = assetPortService.showAllPageMsg(value);
         return map;
     }
 

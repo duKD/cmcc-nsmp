@@ -15,10 +15,10 @@ public class Jobs {
     }
     //任务2
     public void job2() {
-        System.out.println("job2:"+new Date(System.currentTimeMillis()));
+        /*System.out.println("job2:"+new Date(System.currentTimeMillis()));
         AmAssetExample amAssetExample = new AmAssetExample();
         AmAssetExample.Criteria criteria = amAssetExample.createCriteria();
         criteria.andAssetNameEqualTo("三国");
-        amAssetMapper.deleteByExample(amAssetExample);
+        amAssetMapper.deleteByExample(amAssetExample);*/
     }
 }

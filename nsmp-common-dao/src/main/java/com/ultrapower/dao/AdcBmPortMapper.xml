@@ -320,10 +320,27 @@
       MEND_TIME_LAST = #{mendTimeLast,jdbcType=TIMESTAMP}
     where PK_BM_PORT = #{pkBmPort,jdbcType=CHAR}
   </update>
-  <select id="showAllPortProv" parameterType="String" resultMap="BaseResultMap">
-    SELECT a.`PK_BM_PORT`,a.`PROV_CODE`,a.`PORT_TYPE`,a.`PROTOCOL`,a.`PORT`,a.`SEVERITY_LEVEL`,a.`PK_CREATOR`,a.`CREATE_TIME`
-     FROM `adc_bm_port` a
-    WHERE a.`PROV_CODE`=#{id}
-    AND a.`IS_DELETED`=0
+  <resultMap id="BaseResultMap2" type="com.ultrapower.pojo.AdcBmPortDTO" >
+    <result column="PK_BM_PORT" property="pkBmPort"/>
+    <result column="PROV_CODE" property="provCode"/>
+    <result column="PORT_TYPE" property="portType"/>
+    <result column="PROTOCOL" property="protocol"/>
+    <result column="PORT" property="port"/>
+    <result column="SEVERITY_LEVEL" property="severityLevel"/>
+    <result column="PK_CREATOR" property="pkCreator"/>
+    <result column="CREATE_TIME" property="createTime"/>
+  </resultMap>
+  <select id="showAllPortProv" parameterType="com.ultrapower.pojo.AmUser" resultMap="BaseResultMap2">
+  SELECT a.`PK_BM_PORT`,b.`PROV_Name` AS PROV_CODE ,IF(PORT_TYPE=0,'禁止开放','必须开放') AS PORT_TYPE,
+  a.`PROTOCOL`,a.`PORT`,(CASE a.`SEVERITY_LEVEL` WHEN 0 THEN '低' WHEN 1 THEN '中' WHEN 2 THEN '高' END ) AS `SEVERITY_LEVEL` ,c.`USER_ACCOUNT` AS PK_CREATOR,a.`CREATE_TIME`
+     FROM `adc_bm_port` a,`bdm_prov` b,`am_user` c
+   <where>
+     <if test="provCode !=null and provCode !=''">
+       AND a.`PROV_CODE`=#{provCode}
+     </if>
+     and  a.`IS_DELETED`=0
+     AND a.`PROV_CODE`=b.`PROV_CODE`
+     AND a.`PK_CREATOR`=c.`PK_NSMP_USER`
+   </where>
   </select>
 </mapper>
