@@ -573,4 +573,25 @@
       DELETE_TIME = #{deleteTime,jdbcType=TIMESTAMP}
     where PK_ASSET = #{pkAsset,jdbcType=CHAR}
   </update>
+  <resultMap id="asset" type="com.ultrapower.pojo.AmAssetQuery">
+    <result column="PK_ASSET" property="pkAsset"/>
+    <result column="PROV_CODE" property="provCode"/>
+    <result column="ASSET_NAME" property="assetName"/>
+    <result column="ASSET_IP" property="assetIp"/>
+    <result column="TYPE_NAME" property="typeName"/>
+    <result column="BS_NAME" property="bsName"/>
+    <result column="COME_FROM" property="comeFrom"/>
+    <result column="ASSET_STATE" property="assetState"/>
+  </resultMap>
+  <select id="showUnboundAsset" resultMap="asset">
+    SELECT a.`PK_ASSET`,a.`PROV_CODE`,a.`ASSET_NAME`,a.`ASSET_IP`,b.`TYPE_NAME`,c.`BS_NAME` ,
+    (CASE a.`COME_FROM` WHEN 1 THEN '人工录入' WHEN 2 THEN 'Excel导入' WHEN 3 THEN '4A同步' WHEN 4 THEN '未知资产接入' END) AS COME_FROM,
+    (CASE a.`ASSET_STATE` WHEN 1 THEN '临时' WHEN 2 THEN '有效' WHEN 3 THEN '停用' WHEN 4 THEN '删' END ) AS ASSET_STATE
+    FROM `am_asset` a,`am_asset_type` b,`am_bs_prov` c
+    WHERE a.`PK_ASSET_TYPE`=b.`PK_ASSET_TYPE`
+    AND a.`PK_PROV_BS`=c.`PK_BS_PROV`
+    AND a.`PK_ASSET` NOT IN(SELECT c.`PK_ASSET` FROM `adc_bm_port` a,`adc_bm_port_asset` b,`am_asset` c
+    WHERE a.`PK_BM_PORT`=b.`PK_BM_PORT`
+    AND b.`PK_ASSET`=c.`PK_ASSET`)
+  </select>
 </mapper>

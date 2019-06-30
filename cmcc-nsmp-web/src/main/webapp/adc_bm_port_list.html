@@ -25,39 +25,38 @@
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 属性基准管理 <span class="c-gray en">&gt;</span> 端口基准列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
-    <form id="queryForm">
         <!--查询下拉框-->
         <div class="text-c" style="background-color: #f2f0ff;line-height: 50px">
+            <form id="queryForm">
+             <input type="hidden" id="provid" name="provCode"/>
             <span id="prov">
                 省份：
-                <select class="select"  style="width: 130px;text-align-last: center;height: 30px;">
-                    <option>所有</option>
-                    <option>所有1</option>
-                    <option>所有2</option>
+                <select id="provlist" name="provCode" class="select"  style="width: 130px;text-align-last: center;height: 30px;">
                 </select>
             </span>&emsp;
             端口类型：
             <span>
-                <select class="select" style="width: 150px;text-align-last: center;height: 30px">
-                    <option>所有</option>
-                    <option>请选择1</option>
-                    <option>请选择2</option>
+                <select name="portType" class="select" style="width: 150px;text-align-last: center;height: 30px">
+                    <option value="">所有</option>
+                    <option value="0">禁止开放</option>
+                    <option value="1">必须开放</option>
                 </select>
             </span>&emsp;
             协议：
             <span>
-                <select class="select" style="width: 130px;text-align-last: center;height: 30px">
-                    <option>所有</option>
-                    <option>请选择1</option>
-                    <option>请选择2</option>
+                <select name="protocol" class="select" style="width: 130px;text-align-last: center;height: 30px">
+                    <option value="">所有</option>
+                    <option value="TCP">TCP</option>
+                    <option value="UDP">UDP</option>
                 </select>
             </span>&emsp;
 
             端口：
-            <input type="text" class="input-text" name="" style="width:130px">&emsp;
+            <input type="text" class="input-text" name="port" style="width:130px">&emsp;
             <!--查询、重置-->
             <button type="button" onclick="searchBmPort()" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 查询</button>
             <button type="reset" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 重置</button>
+            </form>
         </div>
 
         <!--表格-->
@@ -78,7 +77,6 @@
                     </tr>
                 </thead>
                 <tbody id="tb">
-
                 </tbody>
             </table>
         </div>
@@ -142,63 +140,29 @@
         });
     }
 
-    /**
-     *  端口基准列表
-     */
-    function init_bm_port(){
-        $.ajax({
-            url:"",
-            dataType:'json',
-            success:function (data) {
-                provSelect(data.provs);//省份下拉框
-                portTypesSelect(data.portTypes);//端口类型下拉框
-                protocalSelect(data.protocal);//协议下拉框
-                portTable(data.ports);//表格数据
-            }
-        });
-    }
-    /*省份下拉框 */
-    function provSelect(data) {
-        var str = "<option value='' selected>所有</option>";
-        for(var i = 0 ; i < data.length ;i++){
-            str += "<option value='"+data[i].provCode+"'>"+data[i].provName+"</option>";
-        }
-        $("#prov").html(str);
-    }
-    /*端口类型下拉框*/
-    function portTypesSelect(data) {
-        var str = "<option value='' selected>所有</option>";
-        for(var i = 0 ; i < data.length ;i++){
-            str += "<option value='"+data[i].pkAssetType+"'>"+data[i].typeName+"</option>";
-        }
-        $("#assetType").html(str);
-    }
-
-    /*协议下拉框*/
-    function protocalSelect(data) {
-        var str = "<option value='' selected>所有</option>";
-        for(var i = 0 ; i < data.length ;i++){
-            str += "<option value='"+data[i].pkAssetType+"'>"+data[i].typeName+"</option>";
-        }
-        $("#assetType").html(str);
-    }
-
 
     /*查询*/
     function searchBmPort() {
         $.ajax({
-            url:'',
+            url:'searchBmPortBycondition',
             data:$("#queryForm").serialize(),
+            type:'post',
             dataType:'json',
             success:function (data) {
-                portTable(data.ports);//表格数据
+                showAllPort(data)
+            },
+            error:function () {
+                alert("数据加载失败");
             }
         });
     }
 $(function () {
     var identity=$.cookie("identity");
+    var provCode=$.cookie("provCode");
     if(identity==2){
+        //省份用户
         $("#prov").hide();
+        $("#provid").val(provCode);
         $.ajax({
             url:'/showAllPageMsgProv',
             dataType:'json',
@@ -210,11 +174,14 @@ $(function () {
             }
         })
     }else{
+        //集团用户和超级管理员
+        $("#provid").hide();
         $.ajax({
             url:'/showAllPageMsg',
             dataType:'json',
             success:function (data) {
                 showAllPort(data.adcBmPorts);
+                showProvList(data.bdmProvs);
             },
             error:function () {
                 alert("数据加载失败");
@@ -243,6 +210,13 @@ $(function () {
                 "</tr>"
         }
         $("#tb").html(str);
+    }
+    function showProvList(data) {
+        var str = "<option value='' selected>所有</option>";
+        for(var i = 0 ; i < data.length ;i++){
+            str += "<option value='"+data[i].provCode+"'>"+data[i].provName+"</option>";
+        }
+        $("#provlist").html(str);
     }
 </script>
 

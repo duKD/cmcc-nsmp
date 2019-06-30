@@ -24,21 +24,20 @@
         <property name="jobDetail" ref="job2" />
         <property name="cronExpression" value="0 28 11 * * ?" />
     </bean>
-    <bean id="simpleTrigger1" class=
+    <!--<bean id="simpleTrigger1" class=
             "org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
         <property name="jobDetail" ref="job1" />
-        <!-- 调度工厂实例化后，经过0秒开始执行调度 -->
+        &lt;!&ndash; 调度工厂实例化后，经过0秒开始执行调度 &ndash;&gt;
         <property name="startDelay" value="0" />
-        <property name="repeatInterval" value="5000" /><!-- 重复的间隔 -->
+        <property name="repeatInterval" value="5000" />&lt;!&ndash; 重复的间隔 &ndash;&gt;
         <property name="repeatCount" value="10"/>
-    </bean>
+    </bean>-->
 
     <!--配置调度工厂 -->
     <bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
         <property name="triggers">
             <list>
                 <ref bean="cronTrigger1" />
-                <ref bean="simpleTrigger1" />
             </list>
         </property>
     </bean>

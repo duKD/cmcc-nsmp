@@ -115,3 +115,10 @@ username=tom&sex=nan&sxxxxx
                 }
                 return second;
             }
+            //翻页
+             <div>
+                    <br>当前第<font id="asset_now"></font>页，共<font id="asset_pages"></font>页
+                    <a href="javascript:;" onclick="changePage('next')" id="asset_page_down"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>下一页</a>
+                    <a class="r">&nbsp;</a>
+                    <a href="javascript:;" onclick="changePage('pre')" id="asset_page_up"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>上一页</a>
+                </div>

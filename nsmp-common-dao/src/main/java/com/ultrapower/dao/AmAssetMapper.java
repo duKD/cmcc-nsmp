@@ -2,6 +2,7 @@ package com.ultrapower.dao;
 
 import com.ultrapower.pojo.AmAsset;
 import com.ultrapower.pojo.AmAssetExample;
+import com.ultrapower.pojo.AmAssetQuery;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -28,4 +29,6 @@ public interface AmAssetMapper {
     int updateByPrimaryKeySelective(AmAsset record);
 
     int updateByPrimaryKey(AmAsset record);
+
+    List<AmAssetQuery> showUnboundAsset();
 }

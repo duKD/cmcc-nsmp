@@ -109,20 +109,19 @@
 				<th width="100">资产状态</th>
 			</tr>
 		</thead>
-		<tbody>
-			<tr class="text-c">
-				<td><input type="checkbox" value="1" id="asset" name="asset"></td>
-				<td>北京</td>
-				<td>192.168.3.2...</td>
-				<td>192.168.3.2...</td>
-				<td>操作系统->Centos</td>
-				<td>北京->集团->海淀</td>
-				<td>人工录入</td>
-				<td>临时</td>
-			</tr>
+		<tbody id="assetTable">
 		</tbody>
 	</table>
-
+    <div>
+        <br>当前第<font id="asset_now"></font>页，共<font id="asset_pages"></font>页
+        <a href="javascript:;" onclick="changePage('final')" id="asset_page_last"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>尾页</a>
+        <a class="r">&nbsp;</a>
+        <a href="javascript:;" onclick="changePage('next')" id="asset_page_down"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>下一页</a>
+        <a class="r">&nbsp;</a>
+        <a href="javascript:;" onclick="changePage('pre')" id="asset_page_up"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>上一页</a>
+        <a class="r">&nbsp;</a>
+        <a href="javascript:;" onclick="changePage('first')" id="asset_page_first"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>首页</a>
+    </div>
 	<br>
 
 	<!--端口基准信息-->
@@ -274,32 +273,16 @@ function removeRow(obj) {
 }
 
 function saveBmPort() {
-    $('#tb tr').each(function(i){
+    $('#tb tr').each(function (i) {
         //取表格的第i行第n列的标签的值
         var portType = $(this).find('td:eq(1) select').val();//端口类型；0-禁止开放，1-必须开放
         var protocol = $(this).find('td:eq(2) select').val();//端口协议
         var port = $(this).find('td:eq(3) input').val();//端口
         var severityLevel = $(this).find('td:eq(4) select').val();//严重级别；高中低（2、1、0）
-		var j = '{"portType": "'+portType+'","protocol": "'+protocol+'","port": "'+port+'","severityLevel": "'+severityLevel+'"}';
-		alert(j);
+        var j = '{"portType": "' + portType + '","protocol": "' + protocol + '","port": "' + port + '","severityLevel": "' + severityLevel + '"}';
+        alert(j);
     });
-   /* var a = $("#f1").serializeObject();
-    var b = $("#f2").serializeObject();
-    alert(a);
-    alert(b);*/
-	/*$.ajax({
-		url:'/test1',
-		data:$("#portForm").serialize(),
-		dataType:'json',
-		success:function (data) {
-
-        },
-		error:function () {
-			alert("请求失败");
-        }
-	});*/
 }
-
 /*已选资产*/
 function selectedAsset() {
 	parent.layer_show("已选资产","adc_bm_port_selectedAsset.html",1000,500);
@@ -311,12 +294,77 @@ function add() {
     //var arr=[];
     $("[name = asset]:checkbox").each(function(){
         if ($(this).prop("checked") == true){
-            //arr.push($(this).val());
             $(this).parents("tr").remove();
         }
     })
 }
-
+</script>
+<script>
+	$(function (){
+      $.ajax({
+		  url:'/showAllAddPage',
+		  dataType:'json',
+		  success:function (data) {
+              showProvList()
+              showUnboundAsset(data.pageInfo.list);
+              $("#asset_now").text(data.pageInfo.pageNum);
+              $("#asset_pages").text(data.pageInfo.pages);
+          },
+		  error:function () {
+			  alert("数据加载失败");
+          }
+	  })
+    });
+	function showUnboundAsset(data) {
+      var str="";
+      for(var i=0;i<data.length;i++){
+          str+="<tr class=\"text-c\">\n" +
+              "<td><input type=\"checkbox\" value=\""+data[i].pkAsset+"\" id=\"pkAsset\" name=\"asset\"></td>\n" +
+              "<td>"+data[i].provCode+"</td>\n" +
+              "<td>"+data[i].assetName+"</td>\n" +
+              "<td>"+data[i].assetIp+"</td>\n" +
+              "<td>"+data[i].typeName+"</td>\n" +
+              "<td>"+data[i].bsName+"</td>\n" +
+              "<td>"+data[i].assetState+"</td>\n" +
+              "<td>"+data[i].comeFrom+"</td>\n" +
+              "</tr>"
+	  }
+	  $("#assetTable").html(str)
+    }
+    function changePage(data) {
+        var pageNum=$("#asset_now").text();
+        var pages=$("#asset_pages").text();
+        if(data=="next"){
+            pageNum=parseInt(pageNum)+ 1;
+        }else if(data=='pre'){
+            pageNum=parseInt(pageNum)- 1;
+        }else if(data=='first'){
+            pageNum=1;
+        }else if(data=='final'){
+            pageNum=parseInt(pages)
+        }
+        if(pageNum>0&pageNum<=pages){
+            $.ajax({
+                url:'/showAllAddPage?pageNum='+pageNum,
+                dataType:'json',
+                success:function (data) {
+                    showUnboundAsset(data.pageInfo.list);
+                    $("#asset_now").text(data.pageInfo.pageNum);
+                    $("#asset_pages").text(data.pageInfo.pages);
+                },
+                error:function () {
+                    alert("数据加载失败")
+                }
+            })
+        }
+    }
+    function showProvList(data) {
+        var str = "<option value='' selected>所有</option>";
+        for(var i = 0 ; i < data.length ;i++){
+            str += "<option value='"+data[i].provCode+"'>"+data[i].provName+"</option>";
+        }
+        $("#provlist").html(str);
+    }
 </script>
 </body>
 </html>

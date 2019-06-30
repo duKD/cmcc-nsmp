@@ -32,4 +32,6 @@ public interface AdcBmPortMapper {
     int updateByPrimaryKey(AdcBmPort record);
 
     List<AdcBmPortDTO> showAllPortProv(AmUser amUser);
+
+    List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort adcBmPort);
 }

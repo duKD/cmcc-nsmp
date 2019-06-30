@@ -57,6 +57,10 @@ public class UserServiceImpl implements UserService {
                 pkNsmpUser.setPath("/");
                 pkNsmpUser.setMaxAge(-1);
                 response.addCookie(pkNsmpUser);
+                Cookie provCode = new Cookie("provCode",amUsers.get(0).getProvCode());
+                pkNsmpUser.setPath("/");
+                pkNsmpUser.setMaxAge(-1);
+                response.addCookie(provCode);
                 Cookie identity = new Cookie("identity", amUsers.get(0).getIdentity() + "");
                 identity.setPath("/");
                 identity.setMaxAge(-1);

@@ -1,11 +1,12 @@
 package com.ultrapower.service;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.ultrapower.dao.AdcBmPortMapper;
+import com.ultrapower.dao.AmAssetMapper;
 import com.ultrapower.dao.AmUserMapper;
-import com.ultrapower.pojo.AdcBmPort;
-import com.ultrapower.pojo.AdcBmPortDTO;
-import com.ultrapower.pojo.AdcBmPortExample;
-import com.ultrapower.pojo.AmUser;
+import com.ultrapower.dao.BdmProvMapper;
+import com.ultrapower.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,11 @@ public class AssetPortServiceImpl implements AssetPortService {
     RedisTemplate redisTemplate;
     @Autowired
     AmUserMapper amUserMapper;
+    @Autowired
+    BdmProvMapper bdmProvMapper;
+    @Autowired
+    AmAssetMapper amAssetMapper;
+
     /**
      * 集团用户页面所有数据显示
      * @return
@@ -30,6 +36,9 @@ public class AssetPortServiceImpl implements AssetPortService {
         //1.端口基准列表
         List<AdcBmPortDTO> adcBmPorts = showAllPort(value);
         map.put("adcBmPorts",adcBmPorts);
+        //2.省份下拉框
+        List<BdmProv> bdmProvs = showProvList();
+        map.put("bdmProvs",bdmProvs);
         return map;
     }
 
@@ -55,7 +64,6 @@ public class AssetPortServiceImpl implements AssetPortService {
         List<AdcBmPortDTO> adcBmPorts = adcBmPortMapper.showAllPortProv(amUser);
         return adcBmPorts;
     }
-
     /**
      * 当个省份下的最新资产端口基准列表
      * @return
@@ -67,4 +75,45 @@ public class AssetPortServiceImpl implements AssetPortService {
         List<AdcBmPortDTO> adcBmPorts = adcBmPortMapper.showAllPortProv(amUser);
         return adcBmPorts;
     }
+    /**
+     * 根据条件查询端口基准
+     * @param adcBmPort
+     * @return
+     */
+    public List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort adcBmPort) {
+        List<AdcBmPortDTO> adcBmPortDTOS = adcBmPortMapper.searchBmPortBycondition(adcBmPort);
+        return adcBmPortDTOS;
+    }
+
+    /**
+     * 显示省份下拉框
+     * @return
+     */
+    public List<BdmProv> showProvList() {
+        List<BdmProv> bdmProvs = bdmProvMapper.selectByExample(null);
+        return bdmProvs;
+    }
+    /**
+     * 显示添加端口页面所有数据
+     * @return
+     */
+    public Map<String, Object> showAllAddPage(int pageNum,int pageSize) {
+        Map<String, Object> map= new HashMap();
+        //1.未选资产
+        PageInfo<AmAssetQuery> pageInfo = showUnboundAsset(pageNum, pageSize);
+        map.put("pageInfo",pageInfo);
+        return map;
+    }
+
+    /**
+     * 显示未选择的资产
+     * @return
+     */
+    public PageInfo<AmAssetQuery> showUnboundAsset(int pageNum,int pageSize) {
+        PageHelper.startPage(pageNum,pageSize);
+        List<AmAssetQuery> amAssetQueries = amAssetMapper.showUnboundAsset();
+        PageInfo<AmAssetQuery> pageInfo = new PageInfo<AmAssetQuery>(amAssetQueries);
+        return pageInfo;
+    }
+
 }
