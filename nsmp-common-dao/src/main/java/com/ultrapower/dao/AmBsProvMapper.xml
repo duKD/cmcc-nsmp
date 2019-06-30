@@ -620,4 +620,9 @@
    WHERE a.`PK_BS_PARENT` IS NOT NULL ) b
    ON a.`PK_BS_PROV`=b.`PK_BS_PARENT`
   </select>
+  <select id="showBsNameList" resultMap="BaseResultMap">
+    SELECT  DISTINCT(b.`BS_NAME`)AS `BS_NAME`
+    FROM `am_asset` a,`am_bs_prov` b
+    WHERE a.`PK_PROV_BS`=b.`PK_BS_PROV`
+  </select>
 </mapper>

@@ -1,11 +1,9 @@
 package com.ultrapower.service;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ultrapower.dao.AdcBmPortMapper;
-import com.ultrapower.dao.AmAssetMapper;
-import com.ultrapower.dao.AmUserMapper;
-import com.ultrapower.dao.BdmProvMapper;
+import com.ultrapower.dao.*;
 import com.ultrapower.pojo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -26,6 +24,10 @@ public class AssetPortServiceImpl implements AssetPortService {
     BdmProvMapper bdmProvMapper;
     @Autowired
     AmAssetMapper amAssetMapper;
+    @Autowired
+    AmBsProvMapper amBsProvMapper;
+    @Autowired
+    AmAssetTypeMapper amAssetTypeMapper;
 
     /**
      * 集团用户页面所有数据显示
@@ -102,6 +104,15 @@ public class AssetPortServiceImpl implements AssetPortService {
         //1.未选资产
         PageInfo<AmAssetQuery> pageInfo = showUnboundAsset(pageNum, pageSize);
         map.put("pageInfo",pageInfo);
+        //2.省份下拉框
+        List<BdmProv> bdmProvs = showProvList();
+        map.put("bdmProvs",bdmProvs);
+        //3.业务系统下拉框
+        List<AmBsProv> amBsProvs = showBsNameList();
+        map.put("amBsProvs",amBsProvs);
+        //4.资产类型下拉框
+        List<AmAssetType> amAssetTypes = showAssetType();
+        map.put("amAssetTypes",amAssetTypes);
         return map;
     }
 
@@ -110,10 +121,46 @@ public class AssetPortServiceImpl implements AssetPortService {
      * @return
      */
     public PageInfo<AmAssetQuery> showUnboundAsset(int pageNum,int pageSize) {
+        AmAssetQuery amAssetQuery=new AmAssetQuery();
         PageHelper.startPage(pageNum,pageSize);
-        List<AmAssetQuery> amAssetQueries = amAssetMapper.showUnboundAsset();
+        List<AmAssetQuery> amAssetQueries = amAssetMapper.showUnboundAsset(amAssetQuery);
         PageInfo<AmAssetQuery> pageInfo = new PageInfo<AmAssetQuery>(amAssetQueries);
         return pageInfo;
     }
+
+    /**
+     * 显示业务系统下拉框
+     * @return
+     */
+    public List<AmBsProv> showBsNameList() {
+        List<AmBsProv> amBsProvs = amBsProvMapper.showBsNameList();
+        return amBsProvs;
+    }
+
+    /**
+     * 显示资产类型下拉框
+     * @return
+     */
+    public List<AmAssetType> showAssetType() {
+        List<AmAssetType> amAssetTypes = amAssetTypeMapper.showAssetType();
+        return amAssetTypes;
+    }
+
+    /**
+     * 根据条件查询未选资产
+     * @param amAssetQuery
+     * @return
+     */
+    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery) {
+        int pageNum=Integer.valueOf(amAssetQuery.getPageNum());
+        int pageSize=Integer.valueOf(amAssetQuery.getPageSize());
+        amAssetQuery.setAssetIp("%"+amAssetQuery.getAssetIp()+"%");
+        amAssetQuery.setAssetName("%"+amAssetQuery.getAssetName()+"%");
+        PageHelper.startPage(pageNum, pageSize);
+        List<AmAssetQuery> amAssetQueries = amAssetMapper.showUnboundAsset(amAssetQuery);
+        PageInfo<AmAssetQuery> pageInfo = new PageInfo<AmAssetQuery>(amAssetQueries);
+        return pageInfo;
+    }
+
 
 }

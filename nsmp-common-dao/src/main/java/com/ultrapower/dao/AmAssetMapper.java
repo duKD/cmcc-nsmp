@@ -30,5 +30,5 @@ public interface AmAssetMapper {
 
     int updateByPrimaryKey(AmAsset record);
 
-    List<AmAssetQuery> showUnboundAsset();
+    List<AmAssetQuery> showUnboundAsset(AmAssetQuery amAssetQuery);
 }

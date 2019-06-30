@@ -37,4 +37,6 @@ public interface AmBsProvMapper {
     List<AmBsProv> bsGroupProvMappingByProvRegex(String code);
 
     List<AmProvDTO> provTree();
+
+    List<AmBsProv> showBsNameList();
 }

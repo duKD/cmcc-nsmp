@@ -1,7 +1,9 @@
 package com.ultrapower.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.ultrapower.pojo.AdcBmPort;
 import com.ultrapower.pojo.AdcBmPortDTO;
+import com.ultrapower.pojo.AmAssetQuery;
 import com.ultrapower.service.AssetPortService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,12 @@ public class AssetPortController {
         Map<String, Object> map = assetPortService.showAllPageMsgProv(value);
         return map;
     }
+
+    /**
+     * 根据条件查询端口基准
+     * @param adcBmPort
+     * @return
+     */
     @PostMapping("searchBmPortBycondition")
     public List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort adcBmPort){
         List<AdcBmPortDTO> adcBmPortDTOS = assetPortService.searchBmPortBycondition(adcBmPort);
@@ -46,5 +54,16 @@ public class AssetPortController {
     public Map<String, Object> showAllAddPage(@RequestParam(defaultValue = "1") int pageNum,@RequestParam(defaultValue = "4") int pageSize){
         Map<String, Object> map = assetPortService.showAllAddPage(pageNum,pageSize);
         return map;
+    }
+
+    /**
+     *  根据条件查询未选资产
+     * @param amAssetQuery
+     * @return
+     */
+    @PostMapping("/searchAmAssetBycondition")
+    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery){
+        PageInfo<AmAssetQuery> pageInfo = assetPortService.searchAmAssetBycondition(amAssetQuery);
+        return pageInfo;
     }
 }

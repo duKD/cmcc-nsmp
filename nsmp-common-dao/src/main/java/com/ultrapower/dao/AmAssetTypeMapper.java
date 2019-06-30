@@ -38,4 +38,6 @@ public interface AmAssetTypeMapper {
     List<AmAssetType>  findTypeAndUser();
 
     List<testPojo>  showAsset();
+
+    List<AmAssetType> showAssetType();
 }

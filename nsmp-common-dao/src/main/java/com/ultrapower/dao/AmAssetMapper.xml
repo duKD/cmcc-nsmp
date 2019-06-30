@@ -583,15 +583,37 @@
     <result column="COME_FROM" property="comeFrom"/>
     <result column="ASSET_STATE" property="assetState"/>
   </resultMap>
-  <select id="showUnboundAsset" resultMap="asset">
-    SELECT a.`PK_ASSET`,a.`PROV_CODE`,a.`ASSET_NAME`,a.`ASSET_IP`,b.`TYPE_NAME`,c.`BS_NAME` ,
+  <select id="showUnboundAsset" parameterType="com.ultrapower.pojo.AmAssetQuery" resultMap="asset">
+    SELECT a.`PK_ASSET`,d.`PROV_NAME` AS`PROV_CODE`,a.`ASSET_NAME`,a.`ASSET_IP`,b.`TYPE_NAME`,c.`BS_NAME` ,
     (CASE a.`COME_FROM` WHEN 1 THEN '人工录入' WHEN 2 THEN 'Excel导入' WHEN 3 THEN '4A同步' WHEN 4 THEN '未知资产接入' END) AS COME_FROM,
     (CASE a.`ASSET_STATE` WHEN 1 THEN '临时' WHEN 2 THEN '有效' WHEN 3 THEN '停用' WHEN 4 THEN '删' END ) AS ASSET_STATE
-    FROM `am_asset` a,`am_asset_type` b,`am_bs_prov` c
+    FROM `am_asset` a,`am_asset_type` b,`am_bs_prov` c,`bdm_prov` d
     WHERE a.`PK_ASSET_TYPE`=b.`PK_ASSET_TYPE`
+    AND a.`PROV_CODE`=d.`PROV_CODE`
     AND a.`PK_PROV_BS`=c.`PK_BS_PROV`
     AND a.`PK_ASSET` NOT IN(SELECT c.`PK_ASSET` FROM `adc_bm_port` a,`adc_bm_port_asset` b,`am_asset` c
     WHERE a.`PK_BM_PORT`=b.`PK_BM_PORT`
     AND b.`PK_ASSET`=c.`PK_ASSET`)
+    <if test="provCode!=null and provCode!=''">
+      AND a.`PROV_CODE`=#{provCode}
+    </if>
+    <if test="assetName!=null and assetName!=''">
+      AND a.`ASSET_NAME` LIKE #{assetName}
+    </if>
+    <if test="assetIp!=null and assetIp!=''">
+      AND a.`ASSET_IP` LIKE #{assetIp}
+    </if>
+    <if test="typeName!=null and typeName!=''">
+      AND b.`TYPE_NAME`=#{typeName}
+    </if>
+    <if test="bsName!=null and bsName!=''">
+      AND c.`BS_NAME`=#{bsName}
+    </if>
+    <if test="assetState!=null and assetState!=''">
+      AND a.`ASSET_STATE`=#{assetState}
+    </if>
+    <if test="comeFrom!=null and comeFrom!=''">
+      AND a.`COME_FROM`=#{comeFrom}
+    </if>
   </select>
 </mapper>

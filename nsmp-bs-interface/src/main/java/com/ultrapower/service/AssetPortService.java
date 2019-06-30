@@ -1,10 +1,7 @@
 package com.ultrapower.service;
 
 import com.github.pagehelper.PageInfo;
-import com.ultrapower.pojo.AdcBmPort;
-import com.ultrapower.pojo.AdcBmPortDTO;
-import com.ultrapower.pojo.AmAssetQuery;
-import com.ultrapower.pojo.BdmProv;
+import com.ultrapower.pojo.*;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.List;
@@ -54,4 +51,23 @@ public interface AssetPortService {
      * 显示未选择的资产
      */
     public PageInfo<AmAssetQuery> showUnboundAsset(int pageNum, int pageSize);
+
+    /**
+     * 显示业务系统下拉框
+     * @return
+     */
+    public List<AmBsProv> showBsNameList();
+
+    /**
+     * 显示资产类型下拉框
+     * @return
+     */
+    public List<AmAssetType> showAssetType();
+
+    /**
+     * 根据条件查询未选资产
+     * @param amAssetQuery
+     * @return
+     */
+    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery);
 }

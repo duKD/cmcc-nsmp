@@ -34,62 +34,60 @@
 			</tr>
 			<tr>
 				<th scope="col" colspan="8">
+                    <form id="queryForm">
+						<input type="hidden" id="pageNum" name="pageNum" value="1">
+						<input type="hidden" id="pageSize" name="pageSize" value="4">
 					<div class="text-l" style="background-color: #A3C6C8;line-height: 32px">
 						省份：
 						<span>
-							<select class="select" style="width: 130px;text-align-last: center;height: 30px;">
-								<option>所有</option>
-								<option>所有1</option>
-								<option>所有2</option>
+							<select id="provlist" name="provCode" class="select" style="width: 130px;text-align-last: center;height: 30px;">
 							</select>
 						</span>&emsp;
 
 						业务系统：
 						<span>
-							<select class="select" style="width: 150px;text-align-last: center;height: 27px">
-								<option>所有</option>
-								<option>请选择1</option>
-								<option>请选择2</option>
+							<select id="bsNameList" name="bsName" class="select" style="width: 150px;text-align-last: center;height: 27px">
 							</select>
 						</span>&emsp;
 
 						资产类型：
 						<span>
-							<select class="select" style="width: 130px;text-align-last: center;height: 27px">
-								<option>所有</option>
-								<option>请选择1</option>
-								<option>请选择2</option>
+							<select id="assetType" name="typeName" class="select" style="width: 130px;text-align-last: center;height: 27px">
 							</select>
 						</span>&emsp;
 
 						来源：
 						<span>
-							<select class="select" style="width: 130px;text-align-last: center;height: 27px">
-								<option>所有</option>
-								<option>请选择1</option>
-								<option>请选择2</option>
+							<select name="comeFrom"class="select" style="width: 130px;text-align-last: center;height: 27px">
+								<option value="">所有</option>
+								<option value="1">人工录入</option>
+								<option value="2">Excel导入</option>
+								<option value="3">4A同步</option>
+								<option value="4">未知资产接入</option>
 							</select>
 						</span>&emsp;<br>
 
 						资产名称：
-						<input type="text" class="input-text" name="" style="width:130px;height: 27px">&emsp;
+						<input name="assetName"type="text" class="input-text" name="" style="width:130px;height: 27px">&emsp;
 
 						资产IP：
-						<input type="text" class="input-text" name="" style="width:130px;height: 27px">&emsp;
+						<input name="assetIp"type="text" class="input-text" name="" style="width:130px;height: 27px">&emsp;
 
 						资产状态：
 						<span>
-							<select class="select" style="width: 130px;text-align-last: center;height: 27px">
-								<option>所有</option>
-								<option>请选择1</option>
-								<option>请选择2</option>
+							<select name="assetState"class="select" style="width: 130px;text-align-last: center;height: 27px">
+								<option value="">所有</option>
+								<option value="1">临时</option>
+								<option value="2">有效</option>
+								<option value="3">停用</option>
+								<option value="4">删</option>
 							</select>
 						</span>&emsp;
-
 						<!--查询、重置-->
 						<button type="button" onclick="searchBmPort()" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 查询</button>
 						<button type="reset" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 重置</button>
 					</div>
+                    </form>
 					<div class="cl pd-5 bg-1 bk-gray mt-20">
 						<span class="l">
 							<a href="javascript:;" onclick="add()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a>
@@ -305,10 +303,13 @@ function add() {
 		  url:'/showAllAddPage',
 		  dataType:'json',
 		  success:function (data) {
-              showProvList()
+              showProvList(data.bdmProvs);
               showUnboundAsset(data.pageInfo.list);
+              showBsNameList(data.amBsProvs);
+              showAssetType(data.amAssetTypes);
               $("#asset_now").text(data.pageInfo.pageNum);
               $("#asset_pages").text(data.pageInfo.pages);
+              $.cookie("showUnboundAsset","showAllAddPage");
           },
 		  error:function () {
 			  alert("数据加载失败");
@@ -332,6 +333,7 @@ function add() {
 	  $("#assetTable").html(str)
     }
     function changePage(data) {
+       var s= $.cookie("showUnboundAsset");
         var pageNum=$("#asset_now").text();
         var pages=$("#asset_pages").text();
         if(data=="next"){
@@ -344,18 +346,36 @@ function add() {
             pageNum=parseInt(pages)
         }
         if(pageNum>0&pageNum<=pages){
-            $.ajax({
-                url:'/showAllAddPage?pageNum='+pageNum,
-                dataType:'json',
-                success:function (data) {
-                    showUnboundAsset(data.pageInfo.list);
-                    $("#asset_now").text(data.pageInfo.pageNum);
-                    $("#asset_pages").text(data.pageInfo.pages);
-                },
-                error:function () {
-                    alert("数据加载失败")
-                }
-            })
+            if(s=="showAllAddPage"){
+                $.ajax({
+                    url:'/showAllAddPage?pageNum='+pageNum,
+                    dataType:'json',
+                    success:function (data) {
+                        showUnboundAsset(data.pageInfo.list);
+                        $("#asset_now").text(data.pageInfo.pageNum);
+                        $("#asset_pages").text(data.pageInfo.pages);
+                    },
+                    error:function () {
+                        alert("数据加载失败")
+                    }
+                })
+			}else if(s=="searchAmAssetBycondition"){
+                $("#pageNum").val(pageNum);
+                $.ajax({
+                    url:'/searchAmAssetBycondition',
+                    data:$("#queryForm").serialize(),
+                    type:'post',
+                    dataType:'json',
+                    success:function (data) {
+                        showUnboundAsset(data.list);
+                        $("#asset_now").text(data.pageNum);
+                        $("#asset_pages").text(data.pages);
+                    },
+                    error:function () {
+                        alert("数据加载失败");
+                    }
+                });
+			}
         }
     }
     function showProvList(data) {
@@ -364,6 +384,40 @@ function add() {
             str += "<option value='"+data[i].provCode+"'>"+data[i].provName+"</option>";
         }
         $("#provlist").html(str);
+    }
+
+    function showBsNameList(data) {
+        var str = "<option value='' selected>所有</option>";
+        for(var i = 0 ; i < data.length ;i++){
+            str += "<option value='"+data[i].bsName+"'>"+data[i].bsName+"</option>";
+        }
+        $("#bsNameList").html(str);
+    }
+
+    function showAssetType(data) {
+        var str = "<option value='' selected>所有</option>";
+        for(var i = 0 ; i < data.length ;i++){
+            str += "<option value='"+data[i].typeName+"'>"+data[i].typeName+"</option>";
+        }
+        $("#assetType").html(str);
+    }
+    function searchBmPort() {
+        $("#pageNum").val(1);
+        $.ajax({
+            url:'/searchAmAssetBycondition',
+            data:$("#queryForm").serialize(),
+            type:'post',
+            dataType:'json',
+            success:function (data) {
+                showUnboundAsset(data.list);
+                $("#asset_now").text(data.pageNum);
+                $("#asset_pages").text(data.pages);
+                $.cookie("showUnboundAsset","searchAmAssetBycondition");
+            },
+            error:function () {
+                alert("数据加载失败");
+            }
+        });
     }
 </script>
 </body>

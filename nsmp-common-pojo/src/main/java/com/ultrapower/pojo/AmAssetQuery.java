@@ -3,6 +3,10 @@ package com.ultrapower.pojo;
 import java.util.Date;
 
 public class AmAssetQuery {
+    private String pageNum;
+
+    private String pageSize;
+
     private String pkAsset;
 
     private String provCode;
@@ -18,6 +22,22 @@ public class AmAssetQuery {
     private String bsName;
 
     private String comeFrom;
+
+    public String getPageNum() {
+        return pageNum;
+    }
+
+    public void setPageNum(String pageNum) {
+        this.pageNum = pageNum;
+    }
+
+    public String getPageSize() {
+        return pageSize;
+    }
+
+    public void setPageSize(String pageSize) {
+        this.pageSize = pageSize;
+    }
 
     public String getPkAsset() {
         return pkAsset;
