@@ -591,9 +591,6 @@
     WHERE a.`PK_ASSET_TYPE`=b.`PK_ASSET_TYPE`
     AND a.`PROV_CODE`=d.`PROV_CODE`
     AND a.`PK_PROV_BS`=c.`PK_BS_PROV`
-    AND a.`PK_ASSET` NOT IN(SELECT c.`PK_ASSET` FROM `adc_bm_port` a,`adc_bm_port_asset` b,`am_asset` c
-    WHERE a.`PK_BM_PORT`=b.`PK_BM_PORT`
-    AND b.`PK_ASSET`=c.`PK_ASSET`)
     <if test="provCode!=null and provCode!=''">
       AND a.`PROV_CODE`=#{provCode}
     </if>

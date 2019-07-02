@@ -31,10 +31,10 @@ public interface AssetPortService {
 
     /**
      * 根据条件查询端口基准
-     * @param adcBmPort
+     * @param adcBmPort1
      * @return
      */
-    public List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort adcBmPort);
+    public List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort1 adcBmPort1);
 
     /**
      * 显示省份下拉框，
@@ -70,4 +70,13 @@ public interface AssetPortService {
      * @return
      */
     public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery);
+
+    /**
+     * 添加端口基准信息
+     * @param adcBmPorts
+     * @param ids
+     * @param value
+     * @return
+     */
+    public Map<String,Object> saveBmPort(List<AdcBmPort> adcBmPorts ,String ids,String value);
 }

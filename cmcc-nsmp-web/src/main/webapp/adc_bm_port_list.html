@@ -30,9 +30,11 @@
             <form id="queryForm">
              <input type="hidden" id="provid" name="provCode"/>
             <span id="prov">
-                省份：
-                <select id="provlist" name="provCode" class="select"  style="width: 130px;text-align-last: center;height: 30px;">
-                </select>
+               省份：
+                <span>
+                    <select id="provlist" name="provCode1" class="select" style="width: 130px;text-align-last: center;height: 30px;">
+                    </select>
+                </span>&emsp;
             </span>&emsp;
             端口类型：
             <span>
@@ -139,7 +141,6 @@
             });
         });
     }
-
 
     /*查询*/
     function searchBmPort() {

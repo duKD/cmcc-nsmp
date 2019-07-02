@@ -343,11 +343,14 @@
      AND a.`PK_CREATOR`=c.`PK_NSMP_USER`
    </where>
   </select>
-  <select id="searchBmPortBycondition" parameterType="com.ultrapower.pojo.AdcBmPort" resultMap="BaseResultMap2">
+  <select id="searchBmPortBycondition" parameterType="com.ultrapower.pojo.AdcBmPort1" resultMap="BaseResultMap2">
      SELECT a.`PK_BM_PORT`,b.`PROV_Name` AS PROV_CODE ,IF(PORT_TYPE=0,'禁止开放','必须开放') AS PORT_TYPE,
   a.`PROTOCOL`,a.`PORT`,(CASE a.`SEVERITY_LEVEL` WHEN 0 THEN '低' WHEN 1 THEN '中' WHEN 2 THEN '高' END ) AS `SEVERITY_LEVEL` ,c.`USER_ACCOUNT` AS PK_CREATOR,a.`CREATE_TIME`
      FROM `adc_bm_port` a,`bdm_prov` b,`am_user` c
      <where>
+       <if test="provCode1 !=null and provCode1 !=''">
+         and a.`PROV_CODE`=#{provCode1}
+       </if>
        <if test="provCode !=null and provCode !=''">
          and a.`PROV_CODE`=#{provCode}
        </if>

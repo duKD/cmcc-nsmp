@@ -1,9 +1,6 @@
 package com.ultrapower.dao;
 
-import com.ultrapower.pojo.AdcBmPort;
-import com.ultrapower.pojo.AdcBmPortDTO;
-import com.ultrapower.pojo.AdcBmPortExample;
-import com.ultrapower.pojo.AmUser;
+import com.ultrapower.pojo.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -33,5 +30,5 @@ public interface AdcBmPortMapper {
 
     List<AdcBmPortDTO> showAllPortProv(AmUser amUser);
 
-    List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort adcBmPort);
+    List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort1 adcBmPort1);
 }

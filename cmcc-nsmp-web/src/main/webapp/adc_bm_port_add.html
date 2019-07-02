@@ -271,6 +271,8 @@ function removeRow(obj) {
 }
 
 function saveBmPort() {
+    var ids=$.cookie("ids");
+    var json=[];
     $('#tb tr').each(function (i) {
         //取表格的第i行第n列的标签的值
         var portType = $(this).find('td:eq(1) select').val();//端口类型；0-禁止开放，1-必须开放
@@ -278,8 +280,25 @@ function saveBmPort() {
         var port = $(this).find('td:eq(3) input').val();//端口
         var severityLevel = $(this).find('td:eq(4) select').val();//严重级别；高中低（2、1、0）
         var j = '{"portType": "' + portType + '","protocol": "' + protocol + '","port": "' + port + '","severityLevel": "' + severityLevel + '"}';
-        alert(j);
+        json.push(j);
     });
+    json="["+json+"]";
+    $.ajax({
+		url:'/saveBmPort',
+		data:'json='+json+'&ids='+ids,
+		type:'post',
+		dataType:'json',
+		success:function (data) {
+		    if(data.code==1){
+                layer.msg('已添加成功!',{icon:1,time:1000});
+			}else{
+                layer.msg('添加失败!',{icon:1,time:1000});
+			}
+        },
+		error:function () {
+			alert("数据j加载失败")
+       }
+	})
 }
 /*已选资产*/
 function selectedAsset() {
@@ -288,13 +307,16 @@ function selectedAsset() {
 
 function add() {
     //$(obj).remove();
-    layer.msg('已添加!',{icon: 1,time:1200});
-    //var arr=[];
+    //layer.msg('已添加!',{icon: 1,time:1200});
+    var arr=[];
     $("[name = asset]:checkbox").each(function(){
         if ($(this).prop("checked") == true){
+            arr.push($(this).val());
             $(this).parents("tr").remove();
+            layer.msg('已添加!',{icon: 1,time:1200});
         }
-    })
+    });
+	$.cookie("ids",arr);
 }
 </script>
 <script>

@@ -5,10 +5,12 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ultrapower.dao.*;
 import com.ultrapower.pojo.*;
+import com.ultrapower.util.PkUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,8 @@ public class AssetPortServiceImpl implements AssetPortService {
     AmBsProvMapper amBsProvMapper;
     @Autowired
     AmAssetTypeMapper amAssetTypeMapper;
+    @Autowired
+    AdcBmPortAssetMapper adcBmPortAssetMapper;
 
     /**
      * 集团用户页面所有数据显示
@@ -61,8 +65,7 @@ public class AssetPortServiceImpl implements AssetPortService {
      * @return
      */
     public List<AdcBmPortDTO> showAllPort( String value) {
-        String pkUser = redisTemplate.boundHashOps("session").get("token_" + value) + "";
-        AmUser amUser = amUserMapper.selectByPrimaryKey(pkUser);
+        AmUser amUser = getAmUser(value);
         List<AdcBmPortDTO> adcBmPorts = adcBmPortMapper.showAllPortProv(amUser);
         return adcBmPorts;
     }
@@ -79,11 +82,11 @@ public class AssetPortServiceImpl implements AssetPortService {
     }
     /**
      * 根据条件查询端口基准
-     * @param adcBmPort
+     * @param adcBmPort1
      * @return
      */
-    public List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort adcBmPort) {
-        List<AdcBmPortDTO> adcBmPortDTOS = adcBmPortMapper.searchBmPortBycondition(adcBmPort);
+    public List<AdcBmPortDTO> searchBmPortBycondition(AdcBmPort1 adcBmPort1) {
+        List<AdcBmPortDTO> adcBmPortDTOS = adcBmPortMapper.searchBmPortBycondition(adcBmPort1);
         return adcBmPortDTOS;
     }
 
@@ -162,5 +165,54 @@ public class AssetPortServiceImpl implements AssetPortService {
         return pageInfo;
     }
 
+    /**
+     * 添加端口基准信息
+     * @param adcBmPorts
+     * @param ids
+     * @param value
+     * @return
+     */
+    public Map<String, Object> saveBmPort(List<AdcBmPort> adcBmPorts, String ids, String value) {
+        Map<String, Object> map=new HashMap();
+        try {
+            String[] split = ids.split(",");
+            AmUser amUser = getAmUser(value);
+            String provCode=amUser.getProvCode();
+            String pkNsmpUser = amUser.getPkNsmpUser();
+            Date date = new Date();
+            for(AdcBmPort adcBmPort :adcBmPorts){
+                //1.先向端口表加入数据
+                adcBmPort.setProvCode(provCode);
+                String pkBmPort=PkUtils.getUUID();
+                adcBmPort.setPkBmPort(pkBmPort);
+                adcBmPort.setIsDeleted(0);
+                adcBmPort.setPkCreator(pkNsmpUser);
+                adcBmPort.setCreateTime(date);
+                adcBmPort.setPkMender(pkNsmpUser);
+                adcBmPort.setMendTimeLast(date);
+                adcBmPortMapper.insert(adcBmPort);
+                //2.再向关联表加入数据
+                for(String pKAsset:split){
+                    AdcBmPortAsset adcBmPortAsset = new AdcBmPortAsset();
+                    adcBmPortAsset.setPkBmPortAsset(PkUtils.getUUID());
+                    adcBmPortAsset.setPkBmPort(pkBmPort);
+                    adcBmPortAsset.setPkAsset(pKAsset);
+                    adcBmPortAsset.setProvCode(provCode);
+                    adcBmPortAssetMapper.insert(adcBmPortAsset);
+                }
+            }
+            map.put("code",1);
+        } catch (Exception e) {
+            map.put("code",0);
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    public AmUser getAmUser(String value){
+        String pkUser = redisTemplate.boundHashOps("session").get("token_" + value) + "";
+        AmUser amUser = amUserMapper.selectByPrimaryKey(pkUser);
+        return amUser;
+    }
 
 }
