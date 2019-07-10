@@ -2,10 +2,7 @@ package com.ultrapower.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import com.ultrapower.pojo.AdcBmPort;
-import com.ultrapower.pojo.AdcBmPort1;
-import com.ultrapower.pojo.AdcBmPortDTO;
-import com.ultrapower.pojo.AmAssetQuery;
+import com.ultrapower.pojo.*;
 import com.ultrapower.service.AssetPortService;
 import com.ultrapower.util.StringJsonToJson;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,8 +51,8 @@ public class AssetPortController {
      * @return
      */
     @GetMapping("/showAllAddPage")
-    public Map<String, Object> showAllAddPage(@RequestParam(defaultValue = "1") int pageNum,@RequestParam(defaultValue = "4") int pageSize){
-        Map<String, Object> map = assetPortService.showAllAddPage(pageNum,pageSize);
+    public Map<String, Object> showAllAddPage(@RequestParam(defaultValue = "1") int pageNum,@RequestParam(defaultValue = "4") int pageSize,@CookieValue("pkassets") String pkassets ){
+        Map<String, Object> map = assetPortService.showAllAddPage(pageNum,pageSize,pkassets);
         return map;
     }
 
@@ -65,16 +62,14 @@ public class AssetPortController {
      * @return
      */
     @PostMapping("/searchAmAssetBycondition")
-    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery){
-        PageInfo<AmAssetQuery> pageInfo = assetPortService.searchAmAssetBycondition(amAssetQuery);
+    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery,@CookieValue("pkassets") String pkassets){
+        PageInfo<AmAssetQuery> pageInfo = assetPortService.searchAmAssetBycondition(amAssetQuery,pkassets);
         return pageInfo;
     }
 
     @PostMapping(value = "/saveBmPort")
-    public Map<String,Object> saveBmPort(@RequestParam String json,@RequestParam String ids,@CookieValue("token") String value) throws Exception {
-        List<AdcBmPort> adcBmPorts = StringJsonToJson.jsonStringToList(json);
+    public Map<String,Object> saveBmPort(@RequestBody List<AdcBmPort> adcBmPorts,@CookieValue("pkassets") String ids,@CookieValue("token") String value) throws Exception {
         Map<String, Object> map = assetPortService.saveBmPort(adcBmPorts, ids, value);
         return map;
     }
-
 }

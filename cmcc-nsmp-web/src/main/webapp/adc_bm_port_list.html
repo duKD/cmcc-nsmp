@@ -25,7 +25,8 @@
 <body>
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 属性基准管理 <span class="c-gray en">&gt;</span> 端口基准列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
 <div class="page-container">
-        <!--查询下拉框-->
+    <button type="button" onclick="addBmPort()" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> +添加</button>
+    <!--查询下拉框-->
         <div class="text-c" style="background-color: #f2f0ff;line-height: 50px">
             <form id="queryForm">
              <input type="hidden" id="provid" name="provCode"/>
@@ -218,6 +219,9 @@ $(function () {
             str += "<option value='"+data[i].provCode+"'>"+data[i].provName+"</option>";
         }
         $("#provlist").html(str);
+    }
+    function addBmPort() {
+        parent.layer_show("添加端口基准信息","adc_bm_port_add.html","1200","600");
     }
 </script>
 

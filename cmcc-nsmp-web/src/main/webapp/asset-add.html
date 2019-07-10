@@ -1,0 +1,261 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="renderer" content="webkit|ie-comp|ie-stand">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+<link rel="Bookmark" href="/favicon.ico" >
+<link rel="Shortcut Icon" href="/favicon.ico" />
+<!--[if lt IE 9]>
+<script type="text/javascript" src="lib/html5shiv.js"></script>
+<script type="text/javascript" src="lib/respond.min.js"></script>
+<![endif]-->
+<link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css" />
+<link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin" />
+<link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css" />
+<!--[if IE 6]>
+<script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+<script>DD_belatedPNG.fix('*');</script>
+<![endif]-->
+<!--/meta 作为公共模版分离出去-->
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 资产管理 <span class="c-gray en">&gt;</span> 添加资产 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container" id="asset">
+	<form class="form form-horizontal">
+		<span style="font-size: 20px;font-weight: bold">基本属性</span><hr>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><spin>资产名称：</spin></label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input id="assetName" name="assetName" v-model="asset.assetName" type="text" class="input-text" style="width: 50%">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2" ><spin>资产编码：</spin></label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text"  v-model="asset.assetCode" class="input-text" style="width: 50%">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2" ><spin>资产主IP：</spin></label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text" v-model="asset.assetIp" class="input-text" style="width: 50%">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><spin>资产描述：</spin></label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<input type="text"  v-model="asset.assetDesc" class="input-text" style="width: 50%">
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><spin>所属（省份）业务系统：</spin></label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select class="select" name="" v-model="asset.pkProvBs" style="width: 50%;height: 32px">
+					<option value="">请选择</option>
+					<option v-for="value in assetType.amBsProvs" :value="value.pkBsProv">{{value.bsName}}</option>
+				</select>
+			</div>
+		</div>
+		<div class="row cl">
+			<label class="form-label col-xs-4 col-sm-2"><spin>资产类型：</spin></label>
+			<div class="formControls col-xs-8 col-sm-9">
+				<select class="select"   v-model="asset.pkAssetType" style="width: 50%;height: 32px" @change="showProv(asset.pkAssetType)">
+					<option value="">请选择</option>
+					<option v-for="value in assetType.allAmAssetType":value="value.pkAssetType" >{{value.typeName}}</option>
+				</select>
+			</div>
+		</div>
+		<div>
+			<br><span style="font-size: 20px;font-weight: bold">扩展属性</span><hr>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><spin>所属安全域</spin></label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" style="width: 50%" v-model="assetExtendProp.securityZone">
+				</div>
+			</div>
+
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><spin>所属机构</spin></label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" style="width: 50%" v-model="assetExtendProp.department">
+				</div>
+			</div>
+
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><spin>地理位置</spin></label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" style="width: 50%" v-model="assetExtendProp.region">
+				</div>
+			</div>
+
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><spin>机房位置</spin></label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" style="width: 50%" v-model="assetExtendProp.physicalPosition">
+				</div>
+			</div>
+
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><spin>安全管理员</spin></label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" style="width: 50%" v-model="assetExtendProp.administratorUser">
+				</div>
+			</div>
+
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><spin>安全管理员手机</spin></label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<input type="text" class="input-text" style="width: 50%" v-model="assetExtendProp.administratorPhone">
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><spin>资产归属关系</spin></label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<select class="select" name="" style="width: 50%;height: 32px" v-model="assetExtendProp.ownership">
+						<option value="">请选择</option>
+						<option value="0">自有资产</option>
+						<option value="1">客户资产 </option>
+					</select>
+				</div>
+			</div>
+			<div class="row cl">
+				<label class="form-label col-xs-4 col-sm-2"><spin>资产验收状态</spin></label>
+				<div class="formControls col-xs-8 col-sm-9">
+					<select class="select" name="" style="width: 50%;height: 32px" v-model="assetExtendProp.acceptanceState">
+						<option value="">请选择</option>
+						<option value="0">上线</option>
+						<option value="1">初验</option>
+						<option value="2">终验</option>
+						<option value="3">下线</option>
+					</select>
+				</div>
+			</div>
+		</div>
+
+		<!--资产类型绑定的属性-->
+		<div>
+			<br><span style="font-size: 20px;font-weight: bold">绑定属性</span>
+			<hr>
+			<template v-for="prop in props">
+				<div class="row cl">
+
+					<label class="form-label col-xs-4 col-sm-2"><spin>{{prop.propName}}：</spin></label>
+
+                    <div class="formControls col-xs-8 col-sm-9">
+                        <span v-if="prop.dataType!='E'">
+                            <input type="text" class="input-text" style="width: 50%" v-model="prop.propValue">
+                        </span>
+                        <span v-else>
+                            <div class="radio-box" v-for="value in prop.list">
+					        <input type="radio":value="value.valueName" id="dataType-2" name="dataType"  v-model="prop.propValue">
+					        <label for="dataType-2" >{{value.valueName}}</label>
+			            	</div>
+                        </span>
+					</div>
+				</div>
+			</template>
+		</div>
+
+		<br><br>
+		<div class="row cl">
+			<div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-2">
+				<button @click="saveBaseProp()" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe632;</i> 保存</button>
+			</div>
+		</div>
+	</form>
+</div>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+$(function(){
+	$('.skin-minimal input').iCheck({
+		checkboxClass: 'icheckbox-blue',
+		radioClass: 'iradio-blue',
+		increaseArea: '20%'
+	});
+	$("#tab-system").Huitab({
+		index:0
+	});
+});
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+<script src="vue/vue.js"></script>
+<script>
+    /*模型数据*/
+    var propdata = {
+        props :'',
+		asset:{assetName:'',assetCode:'',assetIp:'',assetDesc:'',pkProvBs:'',pkAssetType:''},
+		assetType:'',
+		assetExtendProp: {
+                securityZone: '', department: '', region: '',
+                physicalPosition: '', administratorUser: '',
+                administratorPhone: '', acceptanceState: '', ownership: ''
+            }
+        };
+	var v = new Vue({
+		el:'#asset',
+		data:propdata,
+		methods:{
+            showProv:function(pkAssetType){
+                var self=this;
+                $.ajax({
+                    url:'/showAllBoundprop?pkAssetType='+pkAssetType,
+                    data:'json',
+                    success:function (data){
+                        self.props=data;
+                    }
+                })
+            },
+            saveBaseProp:function () {
+               var json={asset:this.asset,props:this.props,assetExtendProp:this.assetExtendProp};
+               $.ajax({
+                   url:'/addAsset',
+                   data:JSON.stringify(json),
+                   contentType:'application/json;charset=UTF-8',
+                   dataType:'json',
+                   type:'post',
+                   success:function (res) {
+                       if(res.code==1){
+                           parent.layer.msg('成功!',{icon:0,time:1500});
+					   }else{
+                           parent.layer.msg('失败!',{icon:0,time:1500});
+					   }
+                   },
+				   error:function () {
+					   alert("数据加载失败")
+                   }
+               })
+            }
+		}
+	});
+	$(function () {
+        $.ajax({
+            url:'/showAssetMsg',
+            dataType:'json',
+            success:function (data) {
+                propdata.assetType=data;
+            },
+            error:function () {
+                alert("数据加载失败")
+            }
+        })
+    })
+</script>
+</body>
+</html>

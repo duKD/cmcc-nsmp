@@ -424,4 +424,19 @@
    select *from am_asset_prop a
    where a.PK_ASSET_PROP NOT in((select a.PK_ASSET_PROP FROM am_asset_type_prop a where a.PK_ASSET_TYPE=#{id}))
   </select>
+  <resultMap id="BaseResultMap3" type="com.ultrapower.pojo.VueVO" >
+  <result column="PK_ASSET_PROP" property="pkAssetProp"/>
+  <result column="PROP_NAME" property="propName"  />
+  <result column="DATA_TYPE" property="dataType" />
+    <collection property="list" ofType="com.ultrapower.pojo.provValue">
+      <result column="VALUE_NAME" property="valueName" />
+    </collection>
+  </resultMap>
+  <select id="showAllBoundprop" parameterType="string" resultMap="BaseResultMap3">
+    SELECT a.`PK_ASSET_PROP`, a.`PROP_NAME`,a.`DATA_TYPE`,b.`VALUE_NAME` FROM (SELECT a.`PK_ASSET_PROP`, a.`PROP_NAME`,a.`DATA_TYPE` FROM `am_asset_prop` a
+    WHERE a.`PK_ASSET_PROP` IN (SELECT a.`PK_ASSET_PROP` FROM `am_asset_type_prop` a
+    WHERE a.`PK_ASSET_TYPE`=#{id}
+    )) a LEFT JOIN `am_asset_prop_value` b
+    ON a.PK_ASSET_PROP=b.`PK_ASSET_PROP`
+  </select>
 </mapper>

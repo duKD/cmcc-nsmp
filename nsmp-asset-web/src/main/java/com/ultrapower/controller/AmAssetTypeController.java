@@ -15,6 +15,84 @@ import java.util.Map;
 public class AmAssetTypeController {
     @Autowired
     AmAssetTypeService amAssetTypeService;
+
+    /**
+     * es高级搜索
+     * @param id
+     * @return
+     */
+    @GetMapping("/queryAllAssetByAssetPk")
+    public Map<String,Object> queryAllAssetByAssetPk(@RequestParam String id){
+        Map<String, Object> map = amAssetTypeService.queryAllAssetByAssetPk(id);
+        return map;
+    }
+    /**
+     * 资产下线
+     * @param id
+     * @return
+     */
+    @PostMapping("/changeAssetStateOff")
+    public Map<String,Object> changeAssetStateOff(@RequestParam String id){
+        Map<String, Object> map = amAssetTypeService.changeAssetStateOff(id);
+        return map;
+    }
+    /**
+     * 资产上线
+     * @param id
+     * @return
+     */
+    @PostMapping("/changeAssetStateOn")
+    public Map<String,Object> changeAssetStateOn(@RequestParam String id){
+        Map<String, Object> map = amAssetTypeService.changeAssetStateOn(id);
+        return map;
+    }
+    /**
+     * 编辑资产
+     * @param addAssetVO
+     * @return
+     */
+    @PostMapping("/editAsset")
+    public Map<String,Object> editAsset(@RequestBody AddAssetVO addAssetVO){
+        Map<String, Object> map = amAssetTypeService.editAsset(addAssetVO);
+        return map;
+    }
+    /**
+     * 编辑资产页面数据回显
+     * @param id
+     * @return
+     */
+    @GetMapping("/showAssetAagin")
+    public Map<String,Object> showAssetAagin(@RequestParam String id){
+        Map<String, Object> map = amAssetTypeService.showAssetAagin(id);
+        return map;
+    }
+    /**
+     * 显示绑定属性名称
+     * @param pkAssetType
+     */
+    @GetMapping("/showAllBoundprop")
+    public List<VueVO> showAllBoundprop(@RequestParam String pkAssetType){
+        List<VueVO> amAssetProps = amAssetTypeService.showAllBoundprop(pkAssetType);
+        return amAssetProps;
+    }
+    /**
+     * 添加资产页面数据显示
+     * @return
+     */
+    @GetMapping("/showAssetMsg")
+    public Map<String, Object> showAssetMsg(){
+        Map<String, Object> map = amAssetTypeService.showAssetMsg();
+        return map;
+    }
+    /**
+     * 添加资产
+     * @return
+     */
+    @PostMapping("/addAsset")
+    public Map<String,Object> addAsset(@RequestBody AddAssetVO addAssetVO){
+        Map<String, Object> map = amAssetTypeService.addAsset(addAssetVO);
+        return map;
+    }
     /**
      * 资产查询列表
      */

@@ -29,4 +29,6 @@ public interface AmAssetTypePropMapper {
     int updateByPrimaryKeySelective(AmAssetTypeProp record);
 
     int updateByPrimaryKey(AmAssetTypeProp record);
+
+    List<AmAssetTypeProp> findPkAssetProp(String id);
 }

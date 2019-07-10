@@ -2,9 +2,7 @@ package com.ultrapower.service;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ultrapower.dao.AmAssetPropMapper;
-import com.ultrapower.dao.AmAssetTypePropMapper;
-import com.ultrapower.dao.AmPropClassMapper;
+import com.ultrapower.dao.*;
 import com.ultrapower.pojo.*;
 import com.ultrapower.util.PkUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +21,22 @@ public class AssetpropServiceImpl implements AssetpropService {
     AmAssetTypePropMapper amAssetTypePropMapper;
     @Autowired
     RedisTemplate redisTemplate;
+    @Autowired
+    AmAssetPropValueMapper amAssetPropValueMapper;
+    @Autowired
+    AmAssetMapper amAssetMapper;
+
+
+
+    /**
+     * 查询所有资产
+     * @return
+     */
+    public List<AmAssetQuery> showAllAsset() {
+        List<AmAssetQuery> amAssetQueries = amAssetMapper.showAllAsset();
+        return amAssetQueries;
+    }
+
     /**
      * 查询所有数据
      * @return
@@ -154,40 +168,53 @@ public class AssetpropServiceImpl implements AssetpropService {
     }
     /**
      * 添加属性
-     * @param amAssetProp
+     * @param provVO
      * @param value
      */
-    public void addAmAssetProp(AmAssetProp amAssetProp, String value) {
-        //从前台页面拿到 propName，propCode，propDesc
-        amAssetProp.setPkAssetProp(PkUtils.getUUID());
-        amAssetProp.setPkPropClass("cced8f1871234167a4b7fa5380e0d1cc");
-        Short bsType=4;
-        amAssetProp.setBsType(bsType);
-        amAssetProp.setDataType("S");
-        Short is_view = 1 ;
-        Short is_delete = 0 ;
-        Short comeFrom=0;
-        amAssetProp.setIsView(is_view);
-        amAssetProp.setIsDeleted(is_delete);
-        amAssetProp.setComeFrom(comeFrom);
-        amAssetProp.setCollectType("100");
-        //加入创建人和最后修改人。。。从Redis数据库中取得
-        String pkCreator = redisTemplate.boundHashOps("session").get("token_" + value)+"";
-        //创建时间
-        Date date = new Date();
-        amAssetProp.setCreateTime(date);
-        amAssetProp.setMendTimeLast(date);
-        //加入创建人和最后修改人
-        amAssetProp.setPkCreator(pkCreator);
-        amAssetProp.setPkMender(pkCreator);
-        int i = amAssetPropMapper.insert(amAssetProp);
-        if(i>0){
-            //添加成功，清楚Redis中的缓存
-            Boolean b = redisTemplate.hasKey("proplist");
-            if(b){
-                redisTemplate.delete("proplist");
+    public Map<String, Object> addAmAssetProp(ProvVO provVO, String value) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        try {
+            //先存入资产属性表
+            AmAssetProp amAssetProp = provVO.getAssetPropBaseInfo();
+            String pkAssetProp = PkUtils.getUUID();
+            amAssetProp.setPkAssetProp(pkAssetProp);
+            Short bsType=4;
+            amAssetProp.setBsType(bsType);
+            String collectType = amAssetProp.getCollectType();
+            String replace = collectType.replace(",", "");
+            amAssetProp.setCollectType(replace);
+            //加入创建人和最后修改人。。。从Redis数据库中取得
+            String pkCreator = redisTemplate.boundHashOps("session").get("token_" + value)+"";
+            //创建时间
+            Date date = new Date();
+            amAssetProp.setCreateTime(date);
+            amAssetProp.setMendTimeLast(date);
+            //加入创建人和最后修改人
+            amAssetProp.setPkCreator(pkCreator);
+            amAssetProp.setPkMender(pkCreator);
+            int i = amAssetPropMapper.insert(amAssetProp);
+            if(i>0){
+                //添加成功，清楚Redis中的缓存
+                Boolean b = redisTemplate.hasKey("proplist");
+                if(b){
+                    redisTemplate.delete("proplist");
+                }
             }
+            //再向属性值域列表添加数据
+            List<AmAssetPropValue> assetPropValues = provVO.getAssetPropValues();
+            if(amAssetProp.getDataType().equals("E")&&assetPropValues.size()>0){
+                for(AmAssetPropValue amAssetPropValue :assetPropValues){
+                    amAssetPropValue.setPkAssetPropValue(PkUtils.getUUID());
+                    amAssetPropValue.setPkAssetProp(pkAssetProp);
+                    amAssetPropValueMapper.insert(amAssetPropValue);
+                }
+            }
+            map.put("code",1);
+        } catch (Exception e) {
+            map.put("code",0);
+            e.printStackTrace();
         }
+        return map;
     }
     /**
      * 页面回显数据

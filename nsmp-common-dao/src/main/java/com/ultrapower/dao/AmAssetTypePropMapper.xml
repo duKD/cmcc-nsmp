@@ -256,4 +256,8 @@
     where PK_ASSET_TYPE = #{pkAssetType,jdbcType=CHAR}
       and PK_ASSET_PROP = #{pkAssetProp,jdbcType=CHAR}
   </update>
+  <select id="findPkAssetProp" parameterType="String" resultMap="BaseResultMap">
+    SELECT a.`PK_ASSET_PROP` FROM `am_asset_type_prop` a
+    WHERE a.`PK_ASSET_TYPE`=#{id}
+  </select>
 </mapper>

@@ -1,0 +1,217 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html xmlns:v-on="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5shiv.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css"/>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <!--/meta 作为公共模版分离出去-->
+</head>
+<body>
+<nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 资产管理 <span class="c-gray en">&gt;</span> 资产属性列表 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="Hui-iconfont">&#xe68f;</i></a></nav>
+<div class="page-container">
+
+        <div class="">
+            <!--查询下拉框-->
+            <div class="text-l" style="background-color: #f2f0ff;line-height: 40px">
+                省份：
+                <span>
+                    <select class="select"  name="" style="width: 150px;text-align-last: center;height: 30px;">
+                        <option>所有</option>
+                        <option>所有1</option>
+                        <option>所有2</option>
+                    </select>
+                </span>&emsp;
+                业务系统：
+                <span>
+                    <select class="select"  name="" style="width: 150px;text-align-last: center;height: 30px;">
+                        <option>所有</option>
+                        <option>所有1</option>
+                        <option>所有2</option>
+                    </select>
+                </span>&emsp;
+                资产类型：
+                <span>
+                    <select class="select" name="" style="width: 150px;text-align-last: center;height: 30px">
+                        <option>所有</option>
+                        <option>请选择1</option>
+                        <option>请选择2</option>
+                    </select>
+                </span>&emsp;
+                来源：
+                <span>
+                    <select class="select" name="" style="width: 150px;text-align-last: center;height: 30px">
+                        <option>所有</option>
+                        <option>请选择1</option>
+                        <option>请选择2</option>
+                    </select>
+                </span>&emsp;
+
+                <br>
+                资产名称：
+                <input type="text" class="input-text" name="" style="width:150px">&emsp;
+                资产IP：
+                <input type="text" class="input-text" name="" style="width:150px">&emsp;
+
+                资产状态：
+                <span>
+                    <select class="select" name="" style="width: 150px;text-align-last: center;height: 30px">
+                        <option>所有</option>
+                        <option>请选择1</option>
+                        <option>请选择2</option>
+                    </select>
+                </span>&emsp;
+
+                <!--查询、重置-->
+                <button type="button" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 查询</button>
+                <button type="button" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 重置</button>
+            </div>
+
+            <!--表格-->
+            <div class="mt-20" id="assetV">
+                <table class="table table-border table-bordered table-bg table-hover table-sort">
+                    <thead>
+                        <tr class="text-c">
+                            <th width="50">序号</th>
+                            <th width="200">省份</th>
+                            <th width="200">业务系统</th>
+                            <th width="200">资产类型</th>
+                            <th width="200">资产名称</th>
+                            <th width="200">资产IP</th>
+                            <th width="200">来源</th>
+                            <th width="200">资产状态</th>
+                            <th width="300">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="text-c" v-for="(asset,index) in assets">
+                            <td>{{index+1}}</td>
+                            <td>{{asset.provCode}}</td>
+                            <td>{{asset.bsName}}</td>
+                            <td>{{asset.typeName}}</td>
+                            <td>{{asset.assetName}}</td>
+                            <td>{{asset.assetIp}}</td>
+                            <td>{{asset.comeFrom}}</td>
+                            <td>{{asset.assetState}}</td>
+                            <td class="f-14">
+                                <a style="text-decoration:none"
+                                   onclick="bs_group_look_asset('查看资产信息','bs_group_look_asset.html','0001','780','400')"
+                                   href="javascript:;"><span style="color: #0e90d2">查看</span>
+                                </a>
+                                <a title="上线" href="javascript:;" @click="assetStateOn(asset.pkAsset)" class="ml-5" style="text-decoration:none">上线</a>
+                                <a title="下线" href="javascript:;" @click="assetStateOff(asset.pkAsset)" class="ml-5" style="text-decoration:none">下线</a>
+                                <a title="编辑" href="javascript:;" class="ml-5" style="text-decoration:none" v-on:click="Edit(asset.pkAsset)">编辑</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!--分页-->
+            <div>
+                <br>当前第<font id="asset_now">1</font>页，共<font id="asset_pages">10</font>页
+                <a href="javascript:;" onclick="asset_page_down()" id="asset_page_down"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>下一页</a>
+                <a class="r">&nbsp;</a>
+                <a href="javascript:;" onclick="asset_page_up()" id="asset_page_up"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>上一页</a>
+            </div>
+</div>
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+        $("#tab-system").Huitab({
+            index: 0
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+<script>
+    /*查看资产信息*/
+    function bs_group_look_asset(title,url,id,w,h){
+        parent.parent.layer_show(title,url,w,h);
+    }
+
+    /*手动映射*/
+    function mapping_group_prov(title,url,w,h){
+        layer_show(title,url,w,h);
+    }
+
+</script>
+    <script src="vue/vue.js"></script>
+    <script src="vue/axios.min.js"></script>
+    <script>
+        var data1= {
+            assets:''
+        };
+        var v1 = new Vue({
+            el:"#assetV",
+            data:data1,
+            methods:{
+                Edit:function (id) {
+                   $.cookie("pkAsset",id);
+                    parent.layer_show("编辑资产信息","asset-edit.html",800,500);
+                },
+                assetStateOn:function (id) {
+                    $.ajax({
+                        url:'/changeAssetStateOn?id='+id,
+                        type:'post',
+                        dataType:'json',
+                        success:function (data) {
+                        }
+                    });
+                },
+                assetStateOff:function (id) {
+                    $.ajax({
+                        url:'/changeAssetStateOff?id='+id,
+                        type:'post',
+                        dataType:'json',
+                        success:function (data) {
+
+                        }
+                    });
+                }
+            }
+        });
+        $(function () {
+            $.ajax({
+                url:'/showAllAsset',
+                type:'post',
+                dataType:'json',
+                success:function (data) {
+                    data1.assets=data;
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>

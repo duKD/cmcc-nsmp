@@ -46,11 +46,11 @@ public interface AssetPortService {
      * 显示添加端口页面所有数据
      * @return
      */
-    public Map<String ,Object> showAllAddPage(int pageNum,int pageSize);
+    public Map<String ,Object> showAllAddPage(int pageNum,int pageSize,String pkassets );
     /**
      * 显示未选择的资产
      */
-    public PageInfo<AmAssetQuery> showUnboundAsset(int pageNum, int pageSize);
+    public PageInfo<AmAssetQuery> showUnboundAsset(int pageNum, int pageSize,String pkassets);
 
     /**
      * 显示业务系统下拉框
@@ -69,7 +69,7 @@ public interface AssetPortService {
      * @param amAssetQuery
      * @return
      */
-    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery);
+    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery,String pkassets);
 
     /**
      * 添加端口基准信息

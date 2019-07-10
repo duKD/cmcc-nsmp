@@ -1,0 +1,282 @@
+﻿<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+    <meta http-equiv="Cache-Control" content="no-siteapp"/>
+    <link rel="Bookmark" href="/favicon.ico">
+    <link rel="Shortcut Icon" href="/favicon.ico"/>
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="lib/html5shiv.js"></script>
+    <script type="text/javascript" src="lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="static/h-ui/css/H-ui.min.css"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/H-ui.admin.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/Hui-iconfont/1.0.8/iconfont.css"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/skin/default/skin.css" id="skin"/>
+    <link rel="stylesheet" type="text/css" href="static/h-ui.admin/css/style.css"/>
+    <!--[if IE 6]>
+    <script type="text/javascript" src="lib/DD_belatedPNG_0.0.8a-min.js"></script>
+    <script type="text/javascript" src="lib/utils.js"></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <!--/meta 作为公共模版分离出去-->
+</head>
+<body>
+<div id="aaa" class="HuiTab">
+    <!--顶行显示栏-->
+    <div style="background-color: #f2f0ff;line-height: 30px;margin-bottom: 5px">
+        <span style="font-weight: bold"> &nbsp;· 资产ip：</span><span v-text="queryAssetVO.assetIp">192.168.203.10</span>&emsp;&emsp;
+        <span style="font-weight: bold">资产名称：</span><span v-text="queryAssetVO.assetName">192.168.203.10xxx</span>&emsp;&emsp;
+        <span style="font-weight: bold">业务系统：</span><span v-text="queryAssetVO.bsName">北京总公司->房山</span>&emsp;&emsp;
+        <span style="font-weight: bold">资产类型：</span><span v-text="queryAssetVO.typeName">操作系统->HP-UX</span>&emsp;&emsp;
+    </div>
+    <!--基本信息-->
+    <div id="baseInfo">
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <tbody>
+                <tr class="text-l">
+                    <td style="font-weight: bold">资产IP</td>
+                    <td v-text="queryAssetVO.assetIp">192.168.1.1</td>
+                    <td style="font-weight: bold">资产来源</td>
+                    <td v-text="queryAssetVO.comeFrom">人工录入</td>
+                </tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold">资产名称</td>
+                    <td v-text="queryAssetVO.assetName">192.168.203.10xxx</td>
+                    <td style="font-weight: bold">资产编码</td>
+                    <td v-text="queryAssetVO.assetCode"></td>
+                </tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold">资产类型</td>
+                    <td v-text="queryAssetVO.typeName">操作系统->HP-UX</td>
+                    <td style="font-weight: bold">所属业务系统</td>
+                    <td v-text="queryAssetVO.bsName">北京总公司->房山</td>
+                </tr>
+                <tr><td colspan="4" height="1px" style="background-color: #f2f0ff"></td></tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold">系统名称</td>
+                    <td v-text="amAssetExtendProp.operatingSystemName">HP-UX</td>
+                    <td style="font-weight: bold">硬件厂商</td>
+                    <td v-text="amAssetExtendProp.pkVendor"></td>
+                </tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold" >系统版本</td>
+                    <td v-text="amAssetExtendProp.operatingSystemVersion">B.11.31</td>
+                    <td style="font-weight: bold">硬件型号</td>
+                    <td v-text="amAssetExtendProp.hardwareModel">rx2660</td>
+                </tr>
+                <tr><td colspan="4" height="1px" style="background-color: #f2f0ff"></td></tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold">资产状态</td>
+                    <td colspan="3" v-text="queryAssetVO.assetState">临时</td>
+                </tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold">上线操作人</td>
+                    <td v-text="queryAssetVO.pkOnlineUser"></td>
+                    <td style="font-weight: bold">上线操作时间</td>
+                    <td>{{queryAssetVO.onlineTime |}}</td>
+                </tr>
+                <tr><td colspan="4" height="1px" style="background-color: #f2f0ff"></td></tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold" >公网IP</td>
+                    <td  v-text="amAssetExtendProp.publicIp"></td>
+                    <td style="font-weight: bold">私网IP</td>
+                    <td  v-text="amAssetExtendProp.privateIp"></td>
+                </tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold">DCN网IP</td>
+                    <td v-text="amAssetExtendProp.virtualIp"></td>
+                    <td style="font-weight: bold">NAT IP</td>
+                    <td v-text="amAssetExtendProp.natIp"></td>
+                </tr>
+                <tr><td colspan="4" height="1px" style="background-color: #f2f0ff"></td></tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold" >所属安全域</td>
+                    <td v-text="amAssetExtendProp.securityZone"></td>
+                    <td style="font-weight: bold">所属地域</td>
+                    <td v-text="amAssetExtendProp.region"></td>
+                </tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold">机房位置</td>
+                    <td v-text="amAssetExtendProp.physicalPosition"></td>
+                    <td style="font-weight: bold">所属部门</td>
+                    <td v-text="amAssetExtendProp.department"></td>
+                </tr>
+                <tr><td colspan="4" height="1px" style="background-color: #f2f0ff"></td></tr>
+                <tr class="text-l">
+                    <td style="font-weight: bold" >安全管理员</td>
+                    <td v-text="amAssetExtendProp.administratorUser"></td>
+                    <td style="font-weight: bold">安全管理员手机</td>
+                    <td v-text="amAssetExtendProp.administratorPhone"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!--端口信息-->
+    <div id="portInfo" style="display: none">
+        <div class="text-l" style="background-color: #f2f0ff;line-height: 30px;margin-bottom: 5px;font-weight: bold">&emsp;最新端口列表</div>
+        <div style="line-height: 30px;font-weight: bold;float: left;">&emsp;登录采集</div>
+        <div class="text-c btn btn-primary radius" style="font-weight: bold;color: white;float: right;background-color: #00a0e9;border-bottom: 20px" onclick="asset_files_history('端口历史版本信息','asset_files_history_port.html')">历史版本</div><br>
+        <div class="text-l" style="background-color: #f2f0ff;line-height: 35px;margin-top: 15px;margin-bottom: 5px;">
+            <form action="">
+                &emsp;&emsp;本地端口：
+                <input type="text" class="input-text" name="assetKeyWords" style="width:150px">&emsp;
+                <input type="button" class="text-c btn btn-primary radius" value="查询">
+                <input type="reset" class="text-c btn btn-primary radius" value="重置">
+                <span style="float: right;margin-right: 15px">采集时间：2018-01-16 06:00:02</span>
+            </form>
+        </div>
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+
+                <tr>
+                    <th>序号</th>
+                    <th >端口协议</th>
+                    <th>本地地址</th>
+                    <th>本地端口</th>
+                    <th>远程地址</th>
+                    <th>远程端口</th>
+                    <th>连接状态</th>
+                    <th>端口描述</th>
+                </tr>
+
+            </thead>
+            <tbody>
+            <template v-for="(ports,index) in amAssetPortCollects">
+                <tr class="text-l">
+                    <td v-text="index+1">1</td>
+                    <td v-text="ports.protocol">tcp</td>
+                    <td v-text="ports.localAddr">*</td>
+                    <td v-text="ports.port">50008</td>
+                    <td v-text="ports.remoteAddr">*</td>
+                    <td v-text="ports.remotePort">*</td>
+                    <td v-text="ports.connState">LISTEN</td>
+                    <td v-text="ports.portDesc">X</td>
+                </tr>
+            </template>
+            </tbody>
+        </table>
+        <div class="text-l" style="line-height: 35px;margin-top: 15px;margin-bottom: 5px;">
+            <form action="">
+                &emsp;当前第<span>1</span>页，共<span>5</span>页。总条数：<span>100</span>条
+                <input type="button" class="text-c btn btn-primary radius" style="float: right" value="下一页">
+                <input type="button" class="text-c btn btn-primary radius" style="float: right;margin-right: 10px" value="上一页">
+            </form>
+        </div>
+    </div>
+
+    <!--进程信息-->
+    <div id="procInfo" style="display: none">
+        <div class="text-l" style="background-color: #f2f0ff;line-height: 30px;margin-bottom: 5px;font-weight: bold">&emsp;最新进程列表</div>
+        <div style="line-height: 30px;font-weight: bold;float: left;">&emsp;登录采集</div>
+        <div class="text-c btn btn-primary radius" style="font-weight: bold;color: white;float: right;background-color: #00a0e9;border-bottom: 20px" onclick="asset_files_history('进程历史版本信息','asset_files_history_proc.html')">历史版本</div><br>
+        <div class="text-l" style="background-color: #f2f0ff;line-height: 35px;margin-top: 15px;margin-bottom: 5px;">
+            <form action="">
+                &emsp;&emsp;进程名称：
+                <input type="text" class="input-text" name="assetKeyWords" style="width:150px">&emsp;
+                <input type="button" class="text-c btn btn-primary radius" value="查询">
+                <input type="reset" class="text-c btn btn-primary radius" value="重置">
+                <span style="float: right;margin-right: 15px">采集时间：2018-01-16 06:01:03</span>
+            </form>
+        </div>
+        <table class="table table-border table-bordered table-bg table-hover table-sort">
+            <thead>
+            <tr>
+                <th>序号</th>
+                <th>进程名称</th>
+                <th>所属用户</th>
+                <th>PID</th>
+                <th>PPID</th>
+                <th>启动时间</th>
+                <th>运行时间</th>
+                <th>启动文件</th>
+                <th>当前工作路径</th>
+                <th>启动命令</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="text-l">
+                <td>1</td>
+                <td>rpc_mountd</td>
+                <td>root</td>
+                <td>2239</td>
+                <td>1</td>
+                <td>Oct 9</td>
+                <td>00:00:00</td>
+                <td>/usr/sbin/..</td>
+                <td>/</td>
+                <td>/usr/sbin/..</td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="text-l" style="line-height: 35px;margin-top: 15px;margin-bottom: 5px;">
+            <form action="">
+                &emsp;当前第<span>1</span>页，共<span>5</span>页。总条数：<span>100</span>条
+                <input type="button" class="text-c btn btn-primary radius" style="float: right" value="下一页">
+                <input type="button" class="text-c btn btn-primary radius" style="float: right;margin-right: 10px" value="上一页">
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="lib/My97DatePicker/4.8/WdatePicker.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="lib/jquery.validation/1.14.0/messages_zh.js"></script>
+<script type="text/javascript">
+    $(function () {
+        $('.skin-minimal input').iCheck({
+            checkboxClass: 'icheckbox-blue',
+            radioClass: 'iradio-blue',
+            increaseArea: '20%'
+        });
+        $("#tab-system").Huitab({
+            index: 0
+        });
+    });
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+<script>
+    /*查看资产信息*/
+    function bs_group_look_asset(title,url,id,w,h){
+        parent.parent.layer_show(title,url,w,h);
+    }
+    /*重新映射*/
+    function bs_group_prov_remapping() {
+        parent.parent.layer_show("重新映射","bs_group_prov_remapping.html",800,500);
+    }
+    /*历史版本*/
+    function asset_files_history(content,page) {
+        parent.parent.layer_show(content,page,1000,500)
+    }
+</script>
+<script src="vue/vue.js"></script>
+<script>
+    $(function () {
+        var id=$.cookie("assetPk");
+        $.ajax({
+            url:'/queryAllAssetByAssetPk?id='+id,
+            dataType:'json',
+            success:function (res) {
+                new Vue({
+                    el:'#aaa',
+                    data:res
+                })
+            }
+        })
+    })
+</script>
+</body>
+</html>

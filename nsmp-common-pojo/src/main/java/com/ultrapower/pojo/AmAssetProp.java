@@ -24,9 +24,9 @@ public class AmAssetProp implements Serializable {
 
     private String collectType;
 
-    private Short comeFrom;
+    private Short comeFrom=0;
 
-    private Short isDeleted;
+    private Short isDeleted=0;
 
     private String pkCreator;
 

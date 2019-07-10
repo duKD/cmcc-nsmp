@@ -3,9 +3,11 @@ package com.ultrapower.dao;
 import com.ultrapower.pojo.AmAsset;
 import com.ultrapower.pojo.AmAssetExample;
 import com.ultrapower.pojo.AmAssetQuery;
+import com.ultrapower.pojo.QueryAssetVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
+import java.util.Map;
 
 public interface AmAssetMapper {
     int countByExample(AmAssetExample example);
@@ -30,5 +32,10 @@ public interface AmAssetMapper {
 
     int updateByPrimaryKey(AmAsset record);
 
-    List<AmAssetQuery> showUnboundAsset(AmAssetQuery amAssetQuery);
+    List<AmAssetQuery> showUnboundAsset(Map<String,Object> map);
+
+    List<AmAssetQuery> showAllAsset();
+
+    List<QueryAssetVO> queryAllAssetByAssetPk(String id);
+
 }

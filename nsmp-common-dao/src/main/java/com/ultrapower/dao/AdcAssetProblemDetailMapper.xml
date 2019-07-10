@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ultrapower.dao.AdcAssetProblemDetailMapper" >
+  <resultMap id="BaseResultMap" type="com.ultrapower.pojo.AdcAssetProblemDetail" >
+    <id column="PK_ASSET_PROBLEM_DETAIL" property="pkAssetProblemDetail" jdbcType="CHAR" />
+    <result column="PK_ASSET_PROBLEM" property="pkAssetProblem" jdbcType="CHAR" />
+    <result column="PROBLEM_CODE" property="problemCode" jdbcType="VARCHAR" />
+    <result column="PROBLEM_CONTENT" property="problemContent" jdbcType="VARCHAR" />
+    <result column="SEVERITY_LEVEL" property="severityLevel" jdbcType="INTEGER" />
+    <result column="PK_COLLECT_RECORD" property="pkCollectRecord" jdbcType="CHAR" />
+    <result column="PK_PROBLEM_BASELINE" property="pkProblemBaseline" jdbcType="CHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    PK_ASSET_PROBLEM_DETAIL, PK_ASSET_PROBLEM, PROBLEM_CODE, PROBLEM_CONTENT, SEVERITY_LEVEL, 
+    PK_COLLECT_RECORD, PK_PROBLEM_BASELINE
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.ultrapower.pojo.AdcAssetProblemDetailExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from adc_asset_problem_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select 
+    <include refid="Base_Column_List" />
+    from adc_asset_problem_detail
+    where PK_ASSET_PROBLEM_DETAIL = #{pkAssetProblemDetail,jdbcType=CHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String" >
+    delete from adc_asset_problem_detail
+    where PK_ASSET_PROBLEM_DETAIL = #{pkAssetProblemDetail,jdbcType=CHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.ultrapower.pojo.AdcAssetProblemDetailExample" >
+    delete from adc_asset_problem_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.ultrapower.pojo.AdcAssetProblemDetail" >
+    insert into adc_asset_problem_detail (PK_ASSET_PROBLEM_DETAIL, PK_ASSET_PROBLEM, PROBLEM_CODE, 
+      PROBLEM_CONTENT, SEVERITY_LEVEL, PK_COLLECT_RECORD, 
+      PK_PROBLEM_BASELINE)
+    values (#{pkAssetProblemDetail,jdbcType=CHAR}, #{pkAssetProblem,jdbcType=CHAR}, #{problemCode,jdbcType=VARCHAR}, 
+      #{problemContent,jdbcType=VARCHAR}, #{severityLevel,jdbcType=INTEGER}, #{pkCollectRecord,jdbcType=CHAR}, 
+      #{pkProblemBaseline,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.ultrapower.pojo.AdcAssetProblemDetail" >
+    insert into adc_asset_problem_detail
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="pkAssetProblemDetail != null" >
+        PK_ASSET_PROBLEM_DETAIL,
+      </if>
+      <if test="pkAssetProblem != null" >
+        PK_ASSET_PROBLEM,
+      </if>
+      <if test="problemCode != null" >
+        PROBLEM_CODE,
+      </if>
+      <if test="problemContent != null" >
+        PROBLEM_CONTENT,
+      </if>
+      <if test="severityLevel != null" >
+        SEVERITY_LEVEL,
+      </if>
+      <if test="pkCollectRecord != null" >
+        PK_COLLECT_RECORD,
+      </if>
+      <if test="pkProblemBaseline != null" >
+        PK_PROBLEM_BASELINE,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="pkAssetProblemDetail != null" >
+        #{pkAssetProblemDetail,jdbcType=CHAR},
+      </if>
+      <if test="pkAssetProblem != null" >
+        #{pkAssetProblem,jdbcType=CHAR},
+      </if>
+      <if test="problemCode != null" >
+        #{problemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="problemContent != null" >
+        #{problemContent,jdbcType=VARCHAR},
+      </if>
+      <if test="severityLevel != null" >
+        #{severityLevel,jdbcType=INTEGER},
+      </if>
+      <if test="pkCollectRecord != null" >
+        #{pkCollectRecord,jdbcType=CHAR},
+      </if>
+      <if test="pkProblemBaseline != null" >
+        #{pkProblemBaseline,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.ultrapower.pojo.AdcAssetProblemDetailExample" resultType="java.lang.Integer" >
+    select count(*) from adc_asset_problem_detail
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update adc_asset_problem_detail
+    <set >
+      <if test="record.pkAssetProblemDetail != null" >
+        PK_ASSET_PROBLEM_DETAIL = #{record.pkAssetProblemDetail,jdbcType=CHAR},
+      </if>
+      <if test="record.pkAssetProblem != null" >
+        PK_ASSET_PROBLEM = #{record.pkAssetProblem,jdbcType=CHAR},
+      </if>
+      <if test="record.problemCode != null" >
+        PROBLEM_CODE = #{record.problemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.problemContent != null" >
+        PROBLEM_CONTENT = #{record.problemContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.severityLevel != null" >
+        SEVERITY_LEVEL = #{record.severityLevel,jdbcType=INTEGER},
+      </if>
+      <if test="record.pkCollectRecord != null" >
+        PK_COLLECT_RECORD = #{record.pkCollectRecord,jdbcType=CHAR},
+      </if>
+      <if test="record.pkProblemBaseline != null" >
+        PK_PROBLEM_BASELINE = #{record.pkProblemBaseline,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update adc_asset_problem_detail
+    set PK_ASSET_PROBLEM_DETAIL = #{record.pkAssetProblemDetail,jdbcType=CHAR},
+      PK_ASSET_PROBLEM = #{record.pkAssetProblem,jdbcType=CHAR},
+      PROBLEM_CODE = #{record.problemCode,jdbcType=VARCHAR},
+      PROBLEM_CONTENT = #{record.problemContent,jdbcType=VARCHAR},
+      SEVERITY_LEVEL = #{record.severityLevel,jdbcType=INTEGER},
+      PK_COLLECT_RECORD = #{record.pkCollectRecord,jdbcType=CHAR},
+      PK_PROBLEM_BASELINE = #{record.pkProblemBaseline,jdbcType=CHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.ultrapower.pojo.AdcAssetProblemDetail" >
+    update adc_asset_problem_detail
+    <set >
+      <if test="pkAssetProblem != null" >
+        PK_ASSET_PROBLEM = #{pkAssetProblem,jdbcType=CHAR},
+      </if>
+      <if test="problemCode != null" >
+        PROBLEM_CODE = #{problemCode,jdbcType=VARCHAR},
+      </if>
+      <if test="problemContent != null" >
+        PROBLEM_CONTENT = #{problemContent,jdbcType=VARCHAR},
+      </if>
+      <if test="severityLevel != null" >
+        SEVERITY_LEVEL = #{severityLevel,jdbcType=INTEGER},
+      </if>
+      <if test="pkCollectRecord != null" >
+        PK_COLLECT_RECORD = #{pkCollectRecord,jdbcType=CHAR},
+      </if>
+      <if test="pkProblemBaseline != null" >
+        PK_PROBLEM_BASELINE = #{pkProblemBaseline,jdbcType=CHAR},
+      </if>
+    </set>
+    where PK_ASSET_PROBLEM_DETAIL = #{pkAssetProblemDetail,jdbcType=CHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.ultrapower.pojo.AdcAssetProblemDetail" >
+    update adc_asset_problem_detail
+    set PK_ASSET_PROBLEM = #{pkAssetProblem,jdbcType=CHAR},
+      PROBLEM_CODE = #{problemCode,jdbcType=VARCHAR},
+      PROBLEM_CONTENT = #{problemContent,jdbcType=VARCHAR},
+      SEVERITY_LEVEL = #{severityLevel,jdbcType=INTEGER},
+      PK_COLLECT_RECORD = #{pkCollectRecord,jdbcType=CHAR},
+      PK_PROBLEM_BASELINE = #{pkProblemBaseline,jdbcType=CHAR}
+    where PK_ASSET_PROBLEM_DETAIL = #{pkAssetProblemDetail,jdbcType=CHAR}
+  </update>
+</mapper>

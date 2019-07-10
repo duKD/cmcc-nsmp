@@ -10,10 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
 @Service
 public class AssetPortServiceImpl implements AssetPortService {
     @Autowired
@@ -102,10 +100,10 @@ public class AssetPortServiceImpl implements AssetPortService {
      * 显示添加端口页面所有数据
      * @return
      */
-    public Map<String, Object> showAllAddPage(int pageNum,int pageSize) {
+    public Map<String, Object> showAllAddPage(int pageNum,int pageSize,String pkassets) {
         Map<String, Object> map= new HashMap();
         //1.未选资产
-        PageInfo<AmAssetQuery> pageInfo = showUnboundAsset(pageNum, pageSize);
+        PageInfo<AmAssetQuery> pageInfo = showUnboundAsset(pageNum, pageSize,pkassets);
         map.put("pageInfo",pageInfo);
         //2.省份下拉框
         List<BdmProv> bdmProvs = showProvList();
@@ -123,10 +121,21 @@ public class AssetPortServiceImpl implements AssetPortService {
      * 显示未选择的资产
      * @return
      */
-    public PageInfo<AmAssetQuery> showUnboundAsset(int pageNum,int pageSize) {
+    public PageInfo<AmAssetQuery> showUnboundAsset(int pageNum,int pageSize,String pkassets) {
+        Map<String,Object> map = new HashMap();
+        List<String> list=null;
+        if (pkassets!=null&&!pkassets.equals("")) {
+            String s = pkassets.substring(0, pkassets.length()- 1);
+            String[] split = s.split(",");
+            list = Arrays.asList(split);
+            map.put("pkassets",list);
+        }else{
+            map.put("pkassets",list);
+        }
         AmAssetQuery amAssetQuery=new AmAssetQuery();
+        map.put("AmAssetQuery",amAssetQuery);
         PageHelper.startPage(pageNum,pageSize);
-        List<AmAssetQuery> amAssetQueries = amAssetMapper.showUnboundAsset(amAssetQuery);
+        List<AmAssetQuery> amAssetQueries = amAssetMapper.showUnboundAsset(map);
         PageInfo<AmAssetQuery> pageInfo = new PageInfo<AmAssetQuery>(amAssetQueries);
         return pageInfo;
     }
@@ -154,13 +163,24 @@ public class AssetPortServiceImpl implements AssetPortService {
      * @param amAssetQuery
      * @return
      */
-    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery) {
+    public PageInfo<AmAssetQuery> searchAmAssetBycondition(AmAssetQuery amAssetQuery,String pkassets) {
+        Map<String,Object> map = new HashMap();
+        List<String> list=null;
+        if (pkassets!=null&&!pkassets.equals("")) {
+            String s = pkassets.substring(0, pkassets.length()- 1);
+            String[] split = s.split(",");
+            list = Arrays.asList(split);
+            map.put("pkassets",list);
+        }else{
+            map.put("pkassets",list);
+        }
         int pageNum=Integer.valueOf(amAssetQuery.getPageNum());
         int pageSize=Integer.valueOf(amAssetQuery.getPageSize());
         amAssetQuery.setAssetIp("%"+amAssetQuery.getAssetIp()+"%");
         amAssetQuery.setAssetName("%"+amAssetQuery.getAssetName()+"%");
+        map.put("AmAssetQuery",amAssetQuery);
         PageHelper.startPage(pageNum, pageSize);
-        List<AmAssetQuery> amAssetQueries = amAssetMapper.showUnboundAsset(amAssetQuery);
+        List<AmAssetQuery> amAssetQueries = amAssetMapper.showUnboundAsset(map);
         PageInfo<AmAssetQuery> pageInfo = new PageInfo<AmAssetQuery>(amAssetQueries);
         return pageInfo;
     }
@@ -175,7 +195,6 @@ public class AssetPortServiceImpl implements AssetPortService {
     public Map<String, Object> saveBmPort(List<AdcBmPort> adcBmPorts, String ids, String value) {
         Map<String, Object> map=new HashMap();
         try {
-            String[] split = ids.split(",");
             AmUser amUser = getAmUser(value);
             String provCode=amUser.getProvCode();
             String pkNsmpUser = amUser.getPkNsmpUser();
@@ -192,13 +211,16 @@ public class AssetPortServiceImpl implements AssetPortService {
                 adcBmPort.setMendTimeLast(date);
                 adcBmPortMapper.insert(adcBmPort);
                 //2.再向关联表加入数据
-                for(String pKAsset:split){
-                    AdcBmPortAsset adcBmPortAsset = new AdcBmPortAsset();
-                    adcBmPortAsset.setPkBmPortAsset(PkUtils.getUUID());
-                    adcBmPortAsset.setPkBmPort(pkBmPort);
-                    adcBmPortAsset.setPkAsset(pKAsset);
-                    adcBmPortAsset.setProvCode(provCode);
-                    adcBmPortAssetMapper.insert(adcBmPortAsset);
+                if (ids!=null&&!ids.equals("")) {
+                    String[] split = ids.split(",");
+                    for(String pKAsset:split){
+                        AdcBmPortAsset adcBmPortAsset = new AdcBmPortAsset();
+                        adcBmPortAsset.setPkBmPortAsset(PkUtils.getUUID());
+                        adcBmPortAsset.setPkBmPort(pkBmPort);
+                        adcBmPortAsset.setPkAsset(pKAsset);
+                        adcBmPortAsset.setProvCode(provCode);
+                        adcBmPortAssetMapper.insert(adcBmPortAsset);
+                    }
                 }
             }
             map.put("code",1);

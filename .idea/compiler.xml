@@ -17,6 +17,7 @@
         <module name="nsmp-bs-service-impl" />
         <module name="nsmp-bs-web" />
         <module name="nsmp-common-dao" />
+        <module name="nsmp-common-mongodb" />
         <module name="nsmp-common-pojo" />
         <module name="nsmp-common-quartz" />
         <module name="nsmp-common-redis" />

@@ -1,9 +1,12 @@
 package com.ultrapower.controller;
 
 import com.ultrapower.dao.AmAssetTypeMapper;
+import com.ultrapower.pojo.User;
 import com.ultrapower.pojo.testPojo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -54,6 +57,10 @@ public class testController {
         }
         map.put("data3",count);
         return map;
+    }
+    @PostMapping("/vueTest")
+    public void vueTest(@RequestBody User user){
+        System.out.println();
     }
 
 }

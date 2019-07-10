@@ -1,7 +1,9 @@
 package com.ultrapower.controller;
 
 import com.ultrapower.pojo.AmAssetProp;
+import com.ultrapower.pojo.AmAssetQuery;
 import com.ultrapower.pojo.AmAssetTypeProp;
+import com.ultrapower.pojo.ProvVO;
 import com.ultrapower.service.AssetpropService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -16,6 +18,15 @@ public class AssetpropController {
     AssetpropService assetpropService;
     @Autowired
     RedisTemplate redisTemplate;
+    /**
+     * 显示资产列表
+     * @return
+     */
+    @PostMapping("/showAllAsset")
+    public List<AmAssetQuery> showAllAsset(){
+        List<AmAssetQuery> amAssetQueries = assetpropService.showAllAsset();
+        return amAssetQueries;
+    }
     /**
      * 页面加载所有数据
      * @param pageNum
@@ -77,10 +88,10 @@ public class AssetpropController {
      * 添加属性
      */
     @PostMapping("addAmAssetProp")
-    public void addAmAssetProp(AmAssetProp amAssetProp,@CookieValue("token") String value){
-       assetpropService.addAmAssetProp(amAssetProp,value);
+    public Map<String, Object> addAmAssetProp(@RequestBody ProvVO provVO, @CookieValue("token") String value){
+        Map<String, Object> map = assetpropService.addAmAssetProp(provVO, value);
+        return map;
     }
-
     /**
      * 页面数据回显
      * @param id

@@ -419,4 +419,5 @@
     SELECT DISTINCT(b.`TYPE_NAME`)AS `TYPE_NAME` FROM `am_asset` a,`am_asset_type` b
     WHERE a.`PK_ASSET_TYPE`=b.`PK_ASSET_TYPE`
   </select>
+
 </mapper>

@@ -1,11 +1,14 @@
 package com.ultrapower.service;
 
-import com.ultrapower.dao.AmAssetPropMapper;
-import com.ultrapower.dao.AmAssetTypeMapper;
+import com.ultrapower.dao.*;
 import com.ultrapower.pojo.*;
 import com.ultrapower.util.PkUtils;
 import com.ultrapower.util.StringToDateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -16,13 +19,184 @@ import java.util.*;
 @Service
 public class AmAssetTypeServiceImpl implements AmAssetTypeService {
     @Autowired
+    AmAssetTypePropMapper amAssetTypePropMapper;
+    @Autowired
     AmAssetTypeMapper amAssetTypeMapper;
     @Autowired
     RedisTemplate redisTemplate;
     @Autowired
     AmAssetPropMapper amAssetPropMapper;
+    @Autowired
+    AmBsProvMapper amBsProvMapper;
+    @Autowired
+    AmAssetMapper amAssetMapper;
+    @Autowired
+    AmAssetExtendPropMapper amAssetExtendPropMapper;
+    @Autowired
+    MongoTemplate mongoTemplate;
+    @Autowired
+    AmAssetPortCollectMapper amAssetPortCollectMapper;
+    /**
+     * es高级搜索
+     * @param id
+     * @return
+     */
+    public Map<String, Object> queryAllAssetByAssetPk(String id) {
+        //资产主表
+        Map<String, Object> map=new HashMap<String, Object>();
+        List<QueryAssetVO> queryAssetVOS = amAssetMapper.queryAllAssetByAssetPk(id);
+        map.put("queryAssetVO",null);
+        if(queryAssetVOS!=null&&queryAssetVOS.size()>0){
+            QueryAssetVO queryAssetVO = queryAssetVOS.get(0);
+            map.put("queryAssetVO",queryAssetVO);
+        }
+        //资产扩展表
+        AmAssetExtendProp amAssetExtendProp = amAssetExtendPropMapper.selectByPrimaryKey(id);
+        map.put("amAssetExtendProp",amAssetExtendProp);
+        //端口信息
+        AmAssetPortCollectExample amAssetPortCollectExample = new AmAssetPortCollectExample();
+        AmAssetPortCollectExample.Criteria criteria = amAssetPortCollectExample.createCriteria();
+        criteria.andPkAssetEqualTo(id);
+        List<AmAssetPortCollect> amAssetPortCollects = amAssetPortCollectMapper.selectByExample(amAssetPortCollectExample);
+        map.put("amAssetPortCollects",amAssetPortCollects);
+        return map;
+    }
 
-   public List<AmAssetType> findAllAmAssetType() {
+    public Map<String, Object> changeAssetStateOff(String id) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        try {
+            AmAsset amAsset = amAssetMapper.selectByPrimaryKey(id);
+            Short assetState=4;
+            amAsset.setAssetState(assetState);
+            amAssetMapper.updateByPrimaryKey(amAsset);
+            map.put("code",1);
+        } catch (Exception e) {
+            map.put("code",0);
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    public Map<String, Object> changeAssetStateOn(String id) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        try {
+            AmAsset amAsset = amAssetMapper.selectByPrimaryKey(id);
+            Short assetState=2;
+            amAsset.setAssetState(assetState);
+            amAssetMapper.updateByPrimaryKey(amAsset);
+            map.put("code",1);
+        } catch (Exception e) {
+            map.put("code",0);
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    /**
+     * 编辑资产
+     * @param addAssetVO
+     * @return
+     */
+    public Map<String, Object> editAsset(AddAssetVO addAssetVO) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        try {
+            AmAsset amAsset = addAssetVO.getAsset();
+            //将数据更新到资产表中
+            amAssetMapper.updateByPrimaryKey(amAsset);
+            //assetExtendProp更新扩展数据表
+            AmAssetExtendProp assetExtendProp = addAssetVO.getAssetExtendProp();
+            amAssetExtendPropMapper.updateByPrimaryKey(assetExtendProp);
+            //将PropValue以更新存入mongodb中
+            List<VueVO> props = addAssetVO.getProps();
+            for(VueVO vueVO:props){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("_id").is(vueVO.getId()));
+                Update update = new Update();
+                update.set("pkAsset",vueVO.getPkAsset());
+                update.set("pkAssetProp",vueVO.getPkAssetProp());
+                update.set("propName",vueVO.getPropName());
+                update.set("dataType",vueVO.getDataType());
+                update.set("propValue",vueVO.getPropValue());
+                update.set("list",vueVO.getList());
+                mongoTemplate.updateFirst(query,update,VueVO.class);
+            }
+            map.put("code",1);
+        } catch (Exception e) {
+            map.put("code",0);
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    /**
+     * 编辑资产页面数据回显
+     * @param id
+     * @return
+     */
+    public Map<String, Object> showAssetAagin(String id) {
+        Map<String, Object> map=new HashMap();
+       /* private AmAsset asset;
+        private List<VueVO> props;
+        private AmAssetExtendProp assetExtendProp;*/
+        AmAsset amAsset = amAssetMapper.selectByPrimaryKey(id);
+        AmAssetExtendProp amAssetExtendProp = amAssetExtendPropMapper.selectByPrimaryKey(id);
+        //从mongodb查询出数据
+        Query query = new Query();
+        query.addCriteria(Criteria.where("pkAsset").is(id));
+        List<VueVO> props = mongoTemplate.find(query, VueVO.class);
+        map.put("asset",amAsset);
+        map.put("props",props);
+        map.put("assetExtendProp",amAssetExtendProp);
+        return map;
+    }
+
+    public List<VueVO> showAllBoundprop(String pkAssetType) {
+        List<VueVO> amAssetProps = amAssetPropMapper.showAllBoundprop(pkAssetType);
+        return amAssetProps;
+    }
+
+    public Map<String, Object> addAsset(AddAssetVO addAssetVO) {
+        Map<String, Object> map=new HashMap<String, Object>();
+        try {
+            AmAsset amAsset = addAssetVO.getAsset();
+            //将数据添加到资产表中
+            String pkAsset = PkUtils.getUUID();
+            amAsset.setPkAsset(pkAsset);
+            amAssetMapper.insert(amAsset);
+            //assetExtendProp存入扩展数据表
+            AmAssetExtendProp assetExtendProp = addAssetVO.getAssetExtendProp();
+            assetExtendProp.setPkAsset(pkAsset);
+            amAssetExtendPropMapper.insert(assetExtendProp);
+            //将PropValue以文档的形式存入mongodb中
+            List<VueVO> props = addAssetVO.getProps();
+            for(VueVO vueVO:props){
+                vueVO.setPkAsset(pkAsset);
+                mongoTemplate.insert(vueVO);
+            }
+            map.put("code",1);
+        } catch (Exception e) {
+            map.put("code",0);
+            e.printStackTrace();
+        }
+        return map;
+    }
+
+    /**
+     * 添加资产页面数据显示
+     * @return
+     */
+    public Map<String, Object> showAssetMsg() {
+        Map<String, Object> map=new HashMap<String, Object>();
+        //显示资产类型下拉框
+        List<AmAssetType> allAmAssetType = findAllAmAssetType();
+        map.put("allAmAssetType",allAmAssetType);
+        //显示所有省份业务系统
+        List<AmBsProv> amBsProvs = amBsProvMapper.selectByExample(null);
+        map.put("amBsProvs",amBsProvs);
+        return map;
+    }
+
+    public List<AmAssetType> findAllAmAssetType() {
        List<AmAssetType> amAssetTypes = amAssetTypeMapper.findTypeAndUser();
        return amAssetTypes;
    }

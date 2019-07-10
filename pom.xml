@@ -28,6 +28,7 @@
         <module>nsmp-bs-service-impl</module>
         <module>nsmp-bs-web</module>
         <module>nsmp-common-quartz</module>
+        <module>nsmp-common-mongodb</module>
     </modules>
 
     <dependencies>

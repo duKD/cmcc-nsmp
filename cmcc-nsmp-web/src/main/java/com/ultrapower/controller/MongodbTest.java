@@ -1,7 +1,6 @@
 package com.ultrapower.controller;
 
 import com.mongodb.WriteResult;
-import com.ultrapower.pojo.AmBsGroupExample;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:/applicationContext-mongodb.xml")
+@ContextConfiguration(locations= "classpath:/applicationContext-mongodb.xml")
 public class MongodbTest {
     @Autowired
     MongoTemplate mongoTemplate;

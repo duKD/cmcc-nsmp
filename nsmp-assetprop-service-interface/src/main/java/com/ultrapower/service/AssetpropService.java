@@ -1,7 +1,6 @@
 package com.ultrapower.service;
 
-import com.ultrapower.pojo.AmAssetProp;
-import com.ultrapower.pojo.AmAssetTypeProp;
+import com.ultrapower.pojo.*;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -9,6 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 public interface AssetpropService  {
+    /**
+     * 显示所有资产
+     * @return
+     */
+    public List<AmAssetQuery> showAllAsset();
     /**
      * 查询所有数据
      * @return
@@ -43,10 +47,10 @@ public interface AssetpropService  {
 
     /**
      * 添加属性类
-     * @param amAssetProp
+     * @param provVO
      * @param value
      */
-    public void addAmAssetProp(AmAssetProp amAssetProp,String value);
+    public Map<String,Object> addAmAssetProp(ProvVO provVO, String value);
 
     /**
      * 页面回显数据

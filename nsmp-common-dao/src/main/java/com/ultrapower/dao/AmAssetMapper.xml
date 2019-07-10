@@ -583,7 +583,7 @@
     <result column="COME_FROM" property="comeFrom"/>
     <result column="ASSET_STATE" property="assetState"/>
   </resultMap>
-  <select id="showUnboundAsset" parameterType="com.ultrapower.pojo.AmAssetQuery" resultMap="asset">
+  <select id="showUnboundAsset" parameterType="map" resultMap="asset">
     SELECT a.`PK_ASSET`,d.`PROV_NAME` AS`PROV_CODE`,a.`ASSET_NAME`,a.`ASSET_IP`,b.`TYPE_NAME`,c.`BS_NAME` ,
     (CASE a.`COME_FROM` WHEN 1 THEN '人工录入' WHEN 2 THEN 'Excel导入' WHEN 3 THEN '4A同步' WHEN 4 THEN '未知资产接入' END) AS COME_FROM,
     (CASE a.`ASSET_STATE` WHEN 1 THEN '临时' WHEN 2 THEN '有效' WHEN 3 THEN '停用' WHEN 4 THEN '删' END ) AS ASSET_STATE
@@ -591,26 +591,65 @@
     WHERE a.`PK_ASSET_TYPE`=b.`PK_ASSET_TYPE`
     AND a.`PROV_CODE`=d.`PROV_CODE`
     AND a.`PK_PROV_BS`=c.`PK_BS_PROV`
-    <if test="provCode!=null and provCode!=''">
-      AND a.`PROV_CODE`=#{provCode}
+    <if test="pkassets != null and pkassets.size > 0">
+      <foreach collection="pkassets" item="a.`PK_ASSET`" open="AND a.`PK_ASSET` not in (" close=")" separator=",">
+              #{a.`PK_ASSET`}
+      </foreach>
     </if>
-    <if test="assetName!=null and assetName!=''">
-      AND a.`ASSET_NAME` LIKE #{assetName}
+    <if test="AmAssetQuery.provCode!=null and AmAssetQuery.provCode!=''">
+      AND a.`PROV_CODE`=#{AmAssetQuery.provCode}
     </if>
-    <if test="assetIp!=null and assetIp!=''">
-      AND a.`ASSET_IP` LIKE #{assetIp}
+    <if test="AmAssetQuery.assetName!=null and AmAssetQuery.assetName!=''">
+      AND a.`ASSET_NAME` LIKE #{AmAssetQuery.assetName}
     </if>
-    <if test="typeName!=null and typeName!=''">
-      AND b.`TYPE_NAME`=#{typeName}
+    <if test="AmAssetQuery.assetIp!=null and AmAssetQuery.assetIp!=''">
+      AND a.`ASSET_IP` LIKE #{AmAssetQuery.assetIp}
     </if>
-    <if test="bsName!=null and bsName!=''">
-      AND c.`BS_NAME`=#{bsName}
+    <if test="AmAssetQuery.typeName!=null and AmAssetQuery.typeName!=''">
+      AND b.`TYPE_NAME`=#{AmAssetQuery.typeName}
     </if>
-    <if test="assetState!=null and assetState!=''">
-      AND a.`ASSET_STATE`=#{assetState}
+    <if test="AmAssetQuery.bsName!=null and AmAssetQuery.bsName!=''">
+      AND c.`BS_NAME`=#{AmAssetQuery.bsName}
     </if>
-    <if test="comeFrom!=null and comeFrom!=''">
-      AND a.`COME_FROM`=#{comeFrom}
+    <if test="AmAssetQuery.assetState!=null and AmAssetQuery.assetState!=''">
+      AND a.`ASSET_STATE`=#{AmAssetQuery.assetState}
     </if>
+    <if test="AmAssetQuery.comeFrom!=null and AmAssetQuery.comeFrom!=''">
+      AND a.`COME_FROM`=#{AmAssetQuery.comeFrom}
+    </if>
+  </select>
+  <select id="showAllAsset" resultMap="asset" >
+      SELECT a.`PK_ASSET`,d.`PROV_NAME` AS`PROV_CODE`,a.`ASSET_NAME`,a.`ASSET_IP`,b.`TYPE_NAME`,c.`BS_NAME` ,
+    (CASE a.`COME_FROM` WHEN 1 THEN '人工录入' WHEN 2 THEN 'Excel导入' WHEN 3 THEN '4A同步' WHEN 4 THEN '未知资产接入' END) AS COME_FROM,
+    (CASE a.`ASSET_STATE` WHEN 1 THEN '临时' WHEN 2 THEN '有效' WHEN 3 THEN '停用' WHEN 4 THEN '删' END ) AS ASSET_STATE
+    FROM `am_asset` a,`am_asset_type` b,`am_bs_prov` c,`bdm_prov` d
+    WHERE a.`PK_ASSET_TYPE`=b.`PK_ASSET_TYPE`
+    AND a.`PROV_CODE`=d.`PROV_CODE`
+    AND a.`PK_PROV_BS`=c.`PK_BS_PROV`
+    AND a.`ASSET_STATE` !=4
+  </select>
+  <resultMap id="asset2" type="com.ultrapower.pojo.QueryAssetVO">
+    <result column="PK_ASSET" property="pkAsset"/>
+    <result column="PROV_CODE" property="provCode"/>
+    <result column="ASSET_NAME" property="assetName"/>
+    <result column="ASSET_IP" property="assetIp"/>
+    <result column="TYPE_NAME" property="typeName"/>
+    <result column="BS_NAME" property="bsName"/>
+    <result column="COME_FROM" property="comeFrom"/>
+    <result column="ASSET_STATE" property="assetState"/>
+    <result column="PK_ONLINE_USER" property="pkOnlineUser"/>
+    <result column="ONLINE_TIME" property="onlineTime"/>
+    <result column="ASSET_CODE" property="assetCode"/>
+  </resultMap>
+  <select id="queryAllAssetByAssetPk" parameterType="String" resultMap="asset2" >
+       SELECT a.`PK_ASSET`,d.`PROV_NAME` AS`PROV_CODE`,a.`ASSET_NAME`,a.`ASSET_IP`,b.`TYPE_NAME`,c.`BS_NAME` ,
+    (CASE a.`COME_FROM` WHEN 1 THEN '人工录入' WHEN 2 THEN 'Excel导入' WHEN 3 THEN '4A同步' WHEN 4 THEN '未知资产接入' END) AS COME_FROM,
+    (CASE a.`ASSET_STATE` WHEN 1 THEN '临时' WHEN 2 THEN '有效' WHEN 3 THEN '停用' WHEN 4 THEN '删' END ) AS ASSET_STATE,
+    a.`PK_ONLINE_USER`,a.`ONLINE_TIME`,a.`ASSET_CODE`
+    FROM `am_asset` a,`am_asset_type` b,`am_bs_prov` c,`bdm_prov` d
+    WHERE a.`PK_ASSET_TYPE`=b.`PK_ASSET_TYPE`
+    AND a.`PROV_CODE`=d.`PROV_CODE`
+    AND a.`PK_PROV_BS`=c.`PK_BS_PROV`
+    AND a.`PK_ASSET`=#{id}
   </select>
 </mapper>

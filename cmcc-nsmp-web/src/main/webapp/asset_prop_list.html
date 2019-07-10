@@ -25,7 +25,7 @@
 <nav class="breadcrumb"><i class="Hui-iconfont">&#xe67f;</i> 首页 <span class="c-gray en">&gt;</span> 资产属性管理 <span class="c-gray en">&gt;</span> 属性管理 <a class="btn btn-success radius r" style="line-height:1.6em;margin-top:3px" href="javascript:location.replace(location.href);" title="刷新" ><i class="btn-refresh">刷新</i></a></nav>
 <div class="page-container">
 	<div class="text-c">
-		<form action="" method="post" id="queryForm">
+		<form method="post" id="queryForm">
 		属性分类：
 		<span class="select-box inline">
 		<select class="select" id="amPropClasses" name="pkPropClass">
@@ -45,12 +45,12 @@
 		</select>
 		</span>
 
-		属性信息：<input type="text" class="input-text" id="" name="propName" style="">
-		<button type="button" onclick="queryProp()" class="btn btn-primary radius" id="" name=""><i class="Hui-iconfont"></i> 查询</button>
+		属性信息：<input type="text" class="input-text"  name="propName" style="">
+		<button type="button" onclick="queryProp()" class="btn btn-primary radius"  name=""><i class="Hui-iconfont"></i> 查询</button>
 		<button type="button" onclick="reset()" class="btn btn-primary radius" id="" name=""><i class="Hui-iconfont"></i> 重置</button>
 		</form>
 	</div>
-	<a href="javascript:;" onclick="admin_permission_add('添加','asset-prop-add.html','','310')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a></span> <span class="r">共有数据：<strong><font id="count"></font></strong> 条</span> </div>
+	<a href="javascript:;" onclick="admin_permission_add('添加','asset_prop_add.html','800','500')" class="btn btn-primary radius"><i class="Hui-iconfont">&#xe600;</i> 添加</a></span> <span class="r">共有数据：<strong><font id="count"></font></strong> 条</span> </div>
 	<table class="table table-border table-bordered table-bg">
 		<thead>
 			<tr class="text-c">

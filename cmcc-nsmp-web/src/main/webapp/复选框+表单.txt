@@ -122,3 +122,8 @@ username=tom&sex=nan&sxxxxx
                     <a class="r">&nbsp;</a>
                     <a href="javascript:;" onclick="changePage('pre')" id="asset_page_up"  class="btn btn-primary radius r"><i class="Hui-iconfont"></i>上一页</a>
                 </div>
+                //vue获取单选框的value值
+             <div class="radio-box" v-for="value in prop.list">
+					        <input type="radio":value="value.valueName" id="dataType-2" name="dataType"  v-model="prop.propValue">
+					        <label for="dataType-2" >{{value.valueName}}</label>
+			            	</div>

@@ -2,6 +2,8 @@ package com.ultrapower.dao;
 
 import com.ultrapower.pojo.AmAssetProp;
 import com.ultrapower.pojo.AmAssetPropExample;
+import com.ultrapower.pojo.PropValue;
+import com.ultrapower.pojo.VueVO;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.HashMap;
@@ -35,6 +37,8 @@ public interface AmAssetPropMapper {
     List<AmAssetProp> findPropListByAssetTypeId(String id);
 
     List<AmAssetProp> boundProp(String id);
+
+    List<VueVO> showAllBoundprop(String id);
 
     List<AmAssetProp> findPropListByAssetTypeIdAndLikePropName(HashMap<String,String> hashmap);
 

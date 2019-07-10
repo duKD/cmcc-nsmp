@@ -271,7 +271,6 @@ function removeRow(obj) {
 }
 
 function saveBmPort() {
-    var ids=$.cookie("ids");
     var json=[];
     $('#tb tr').each(function (i) {
         //取表格的第i行第n列的标签的值
@@ -279,27 +278,27 @@ function saveBmPort() {
         var protocol = $(this).find('td:eq(2) select').val();//端口协议
         var port = $(this).find('td:eq(3) input').val();//端口
         var severityLevel = $(this).find('td:eq(4) select').val();//严重级别；高中低（2、1、0）
-        var j = '{"portType": "' + portType + '","protocol": "' + protocol + '","port": "' + port + '","severityLevel": "' + severityLevel + '"}';
+        var j = {"portType": "" + portType + "","protocol": "" + protocol + "","port": "" + port + "","severityLevel": "" + severityLevel + ""};
         json.push(j);
     });
-    json="["+json+"]";
     $.ajax({
-		url:'/saveBmPort',
-		data:'json='+json+'&ids='+ids,
-		type:'post',
-		dataType:'json',
-		success:function (data) {
-		    if(data.code==1){
-                layer.msg('已添加成功!',{icon:1,time:1000});
-			}else{
-                layer.msg('添加失败!',{icon:1,time:1000});
-			}
+        url:'/saveBmPort',
+        data:JSON.stringify(json),
+        type:'post',
+        contentType:'application/json;charset=UTF-8',
+        dataType:'json',
+        success:function (data) {
+           if(data.code==1){
+               var index = parent.layer.getFrameIndex(window.name);
+               parent.layer.msg('添加成功!',{icon:1,time:1200});
+               parent.layer.close(index);//关闭窗口
+		   }
         },
 		error:function () {
-			alert("数据j加载失败")
-       }
-	})
-}
+            alert("数据j加载失败")
+        }
+    })
+
 /*已选资产*/
 function selectedAsset() {
 	parent.layer_show("已选资产","adc_bm_port_selectedAsset.html",1000,500);
@@ -308,20 +307,21 @@ function selectedAsset() {
 function add() {
     //$(obj).remove();
     //layer.msg('已添加!',{icon: 1,time:1200});
-    var arr=[];
+    var arr=$.cookie("pkassets");
     $("[name = asset]:checkbox").each(function(){
         if ($(this).prop("checked") == true){
-            arr.push($(this).val());
+            arr =arr+$(this).val()+",";
             $(this).parents("tr").remove();
             layer.msg('已添加!',{icon: 1,time:1200});
         }
     });
-	$.cookie("ids",arr);
+	$.cookie("pkassets",arr);
 }
 </script>
 <script>
 	$(function (){
-      $.ajax({
+	    $.cookie("pkassets","");
+		$.ajax({
 		  url:'/showAllAddPage',
 		  dataType:'json',
 		  success:function (data) {
@@ -376,6 +376,7 @@ function add() {
                         showUnboundAsset(data.pageInfo.list);
                         $("#asset_now").text(data.pageInfo.pageNum);
                         $("#asset_pages").text(data.pageInfo.pages);
+                        layer.msg('操作成功!',{icon: 0,time:1200});
                     },
                     error:function () {
                         alert("数据加载失败")
@@ -392,6 +393,7 @@ function add() {
                         showUnboundAsset(data.list);
                         $("#asset_now").text(data.pageNum);
                         $("#asset_pages").text(data.pages);
+                        layer.msg('操作成功!',{icon: 0,time:1200});
                     },
                     error:function () {
                         alert("数据加载失败");
