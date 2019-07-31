@@ -20,8 +20,10 @@
         <module name="nsmp-common-mongodb" />
         <module name="nsmp-common-pojo" />
         <module name="nsmp-common-quartz" />
+        <module name="nsmp-common-rabbit" />
         <module name="nsmp-common-redis" />
         <module name="nsmp-common-service" />
+        <module name="nsmp-common-shiro" />
         <module name="nsmp-common-util" />
         <module name="nsmp-user-service-impl" />
         <module name="nsmp-user-service-interface" />

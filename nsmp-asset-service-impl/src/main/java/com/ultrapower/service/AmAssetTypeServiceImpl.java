@@ -162,6 +162,10 @@ public class AmAssetTypeServiceImpl implements AmAssetTypeService {
             //将数据添加到资产表中
             String pkAsset = PkUtils.getUUID();
             amAsset.setPkAsset(pkAsset);
+            Short s=1;
+            amAsset.setComeFrom(s);
+            amAsset.setProvCode("HB");
+            amAsset.setAssetState(s);
             amAssetMapper.insert(amAsset);
             //assetExtendProp存入扩展数据表
             AmAssetExtendProp assetExtendProp = addAssetVO.getAssetExtendProp();
@@ -173,6 +177,7 @@ public class AmAssetTypeServiceImpl implements AmAssetTypeService {
                 vueVO.setPkAsset(pkAsset);
                 mongoTemplate.insert(vueVO);
             }
+            map.put("pkAsset",pkAsset);
             map.put("code",1);
         } catch (Exception e) {
             map.put("code",0);

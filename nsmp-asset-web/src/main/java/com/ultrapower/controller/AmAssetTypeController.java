@@ -2,6 +2,8 @@ package com.ultrapower.controller;
 
 import com.ultrapower.pojo.*;
 import com.ultrapower.service.AmAssetTypeService;
+import com.ultrapower.util.SerializeUtil;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +17,8 @@ import java.util.Map;
 public class AmAssetTypeController {
     @Autowired
     AmAssetTypeService amAssetTypeService;
-
+    @Autowired
+    AmqpTemplate amqpTemplate;
     /**
      * es高级搜索
      * @param id
@@ -91,6 +94,15 @@ public class AmAssetTypeController {
     @PostMapping("/addAsset")
     public Map<String,Object> addAsset(@RequestBody AddAssetVO addAssetVO){
         Map<String, Object> map = amAssetTypeService.addAsset(addAssetVO);
+        Object code = map.get("code");
+        if((Integer)code==1){
+            //向消息队列中发布消息
+            String rountingKey="AssetQueueKey";
+            Map<String,Object> message= new HashMap();
+            message.put("pkAsset",map.get("pkAsset"));
+            message.put("type","insert");
+            amqpTemplate.convertAndSend(rountingKey, SerializeUtil.serialize(message));
+        }
         return map;
     }
     /**

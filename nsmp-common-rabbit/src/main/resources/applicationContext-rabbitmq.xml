@@ -12,7 +12,7 @@
      http://www.springframework.org/schema/context
      http://www.springframework.org/schema/context/spring-context.xsd">
 
-    <context:component-scan base-package="com.ultrapower.controller.rabbit"/>
+    <context:component-scan base-package="com.ultrapower.controller"/>
 
     <!-- 配置rabbitmq服务信息 -->
     <rabbit:connection-factory id="connectionFactory"
@@ -26,23 +26,23 @@
     <rabbit:admin connection-factory="connectionFactory"/>
 
     <!--定义名称为queueTest的队列-->
-    <rabbit:queue name="queueTest" />
+    <rabbit:queue name="AssetQueue" />
 
     <!-- 定义direct类型的交换器，绑定 binding key = queueTest -->
     <rabbit:direct-exchange name="exchangeTest">
         <rabbit:bindings>
-            <rabbit:binding queue="queueTest" key="queueTestKey" />
+            <rabbit:binding queue="AssetQueue" key="AssetQueueKey" />
         </rabbit:bindings>
     </rabbit:direct-exchange>
 
     <!-- 消息接收者 -->
     <bean id="messageReceiver"
-          class="com.ultrapower.controller.rabbit.MessageConsumer">
+          class="com.ultrapower.controller.AssetQueueConsumer">
     </bean>
 
     <!--指定队列的订阅端（消息接收端）-->
     <rabbit:listener-container connection-factory="connectionFactory">
-        <rabbit:listener queues="queueTest" ref="messageReceiver" />
+        <rabbit:listener queues="AssetQueue" ref="messageReceiver" />
     </rabbit:listener-container>
 
 </beans>

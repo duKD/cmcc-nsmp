@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations="classpath:/applicationContext-rabbitmq.xml")
+@ContextConfiguration(locations= "classpath:/applicationContext-rabbitmq.xml")
 public class RabbitMqTest {
 
     @Autowired

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <property name="securityManager" ref="securityManager"/>
+        <property name="loginUrl" value="login.html"/>
+        <!--未授权的跳转页面-->
+        <property name="unauthorizedUrl" value="403.html"/>
+        <property name="filterChainDefinitions"> <!--过滤器链-->
+            <value>
+                /login.html = anon  <!--在内置的过滤器链中，anon表示不过滤-->
+                /userLogin= anon <!--登录不拦截-->
+                /seeAgain=logout<!--退出登录-->
+                /* = authc          <!-- /*放在最下面， authc表示过滤-->
+            </value>
+        </property>
+    </bean>
+
+    <!--创建SecurityManager对象-->
+    <bean class="org.apache.shiro.web.mgt.DefaultWebSecurityManager" id="securityManager">
+        <property name="realm" ref="customerRealm"/>
+    </bean>
+    <!--自定义realm-->
+    <bean id="customerRealm" class="com.ultrapower.controller.CustomerRealm">
+        <!--<property name="credentialsMatcher" ref="credentialsMatcher" />-->
+    </bean>
+
+    <!--<bean class="org.apache.shiro.authc.credential.HashedCredentialsMatcher"
+          id="credentialsMatcher">
+        <property name="hashAlgorithmName" value="md5"/>
+        <property name="hashIterations" value="1"/>
+    </bean>
+-->
+</beans>
